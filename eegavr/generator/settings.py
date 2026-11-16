@@ -76,3 +76,16 @@ def all_settings():
                              "knob_name": KNOB_NAME[a] if a == "A1" else "derived from the B3 base scene",
                              "style": "default"}
     return S
+
+
+SETTING_CODE = {sid: i + 1 for i, sid in enumerate(all_settings())}
+
+
+def seed_for(split, sid, counter):
+    # disjoint seed blocks: split code x 1e9 + setting code x 1e6 + counter
+    assert counter < 10**6
+    return SPLIT_CODE[split] * 10**9 + SETTING_CODE[sid] * 10**6 + counter
+
+
+def b_setting_for(b_rule, i):
+    return id_settings(b_rule)[i % len(ID_BINS[b_rule])]
