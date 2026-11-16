@@ -27,7 +27,7 @@ ID_BINS = {
     "B4": [(0.010, 0.015)],
     "C1": [(3, 3)],
 }
-FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.03, 0.08), "B4": (0.010, 0.015), "C1": (3, 3)}
+FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.06, 0.08), "B4": (0.010, 0.015), "C1": (3, 3)}
 TUNING = {
     "A6": {"a6_pool": ["FS", "OT", "OS"]},
     "B1": {"role_fill": "outline", "role_ink_jitter": 0.03, "role_ink_offset": 0.005, "n_objects_id": (4, 4)},
@@ -56,8 +56,17 @@ def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
     return st
 
 
+DROPPED = {"A6-s01": "5c: no distractor means 'outline square present' sorts every problem",
+           "B3-s01": "5a pass probe 0.549 [0.541, 0.557] (v0.2.2)",
+           "B3-s02": "5a pass probe 0.542 [0.532, 0.552] (v0.2.2)"}
+
+
 def id_settings(rule):
     return [base(rule, f"{rule}-s{i + 1:02d}", b) for i, b in enumerate(ID_BINS[rule])]
+
+
+def active_id_settings(rule):
+    return [st for st in id_settings(rule) if st["id"] not in DROPPED]
 
 
 def ood_settings(rule):
@@ -101,4 +110,5 @@ def seed_for(split, sid, counter):
 
 
 def b_setting_for(b_rule, i):
-    return id_settings(b_rule)[i % len(ID_BINS[b_rule])]
+    act = active_id_settings(b_rule)
+    return act[i % len(act)]

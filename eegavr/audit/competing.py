@@ -26,19 +26,31 @@ def _pair_counts(L, y):
     return tp + ((1 - yi).sum() - fp)
 
 
-def equivalence_mask(L_pool, y_pool):
-    # candidate ANDs that mean the same as the intended rule on the setting's reference pool
+FAMILY = {"A1": ("A1:",), "A6": ("A6:",), "B1": ("B1:", "B1':"), "B3": ("B3:",), "B4": ("B4:",), "C1": ("C:count",)}
+
+
+def equivalence_mask(L_pool, y_pool, names=None, rule=None):
+    # candidates treated as the intended rule: equivalent on the pool, containing an equivalent literal, or built
+    # only from threshold variants of the rule's own predicate and pool-constant literals
     agree = _pair_counts(L_pool, y_pool) / len(y_pool)
-    return (agree >= EQUIV) | (agree <= 1 - EQUIV)
+    eq = (agree >= EQUIV) | (agree <= 1 - EQUIV)
+    d = np.diag(eq).copy()
+    eq = eq | d[:, None] | d[None, :]
+    if names is None or rule is None:
+        return eq
+    fam = np.array([n.startswith(FAMILY[rule]) for n in names])
+    const = L_pool.all(1) | (~L_pool).all(1)
+    fam2, const2 = np.r_[fam, fam], np.r_[const, const]
+    ok = fam2 | const2
+    pair_ok = ok[:, None] & ok[None, :] & (fam2[:, None] | fam2[None, :])
+    return eq | pair_ok
 
 
 def competing(L_prob, y_prob, eqmask, names):
     # candidates sorting all panels, excluding those equivalent to, or containing a literal equivalent to, the rule
     cnt = _pair_counts(L_prob, y_prob)
     n = len(y_prob)
-    d = np.diag(eqmask)
-    allowed = eqmask | d[:, None] | d[None, :]
-    hit = ((cnt == n) | (cnt == 0)) & ~allowed
+    hit = ((cnt == n) | (cnt == 0)) & ~eqmask
     P = len(names)
     lit = names + [f"NOT {x}" for x in names]
     ii, jj = np.nonzero(np.triu(hit))

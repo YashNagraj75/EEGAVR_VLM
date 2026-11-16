@@ -1,13 +1,13 @@
 import hashlib
 import numpy as np
-from .settings import all_settings, seed_for, SPLIT_CODE, SETTING_CODE, PARTNERS, id_settings, ood_settings
+from .settings import all_settings, seed_for, SPLIT_CODE, SETTING_CODE, PARTNERS, active_id_settings, ood_settings
 from .rules import sample_pair
 from .partners import partner_pair
 from ..audit.competing import literal_matrix, competing
 
 N_SUPPORT = 6
 MAX_ATTEMPTS = 14
-PARTNER_TRIES = 6
+PARTNER_TRIES = 20
 
 
 def panel_id(sid, split, counter, member, extra=""):
@@ -57,9 +57,7 @@ def check_5c(pairs, eq):
 
 def problem_setting(rule, split, k):
     if split in ("validation", "test_id"):
-        bins = id_settings(rule)
-        if rule == "A6":
-            bins = bins[1:]
+        bins = active_id_settings(rule)
         return bins[k % len(bins)]
     return ood_settings(rule)[split]
 
@@ -95,7 +93,10 @@ def build_partner(b_rule, pairs, eq, rng, stats):
     a_rule = PARTNERS[b_rule]
     for salt in range(PARTNER_TRIES):
         states = list(rng.permutation([True] * 3 + [False] * 3)) + [bool(rng.random() < 0.5)]
-        pp = [partner_pair(a_rule, bp, s, salt) for bp, s in zip(pairs, states)]
+        picks = ["random"] * len(pairs)
+        a, b = rng.choice(len(pairs), 2, replace=False)
+        picks[a], picks[b] = "max", "min"
+        pp = [partner_pair(a_rule, bp, s, salt, pk) for bp, s, pk in zip(pairs, states, picks)]
         for q, bp in zip(pp, pairs):
             q["counter"], q["split"] = bp["counter"], bp["split"]
         comp = check_5c(pp, eq)
@@ -148,7 +149,8 @@ def build_job(args):
             for p in prs:
                 extra = None
                 if base_sid:
-                    extra = {"base_setting_id": p["base_setting_id"], "base_seed": p["seed"], "salt": p["salt"]}
+                    extra = {"base_setting_id": p["base_setting_id"], "base_seed": p["seed"], "salt": p["salt"],
+                             "pick": p["pick"]}
                 tag = f"{p.get('b_state')}{p.get('salt')}" if base_sid else ""
                 mid = (panel_id(gsid, split, p["counter"], "p", tag), panel_id(gsid, split, p["counter"], "n", tag))
                 ids.append(mid)
@@ -180,7 +182,7 @@ def regenerate(scene_json):
         bp = sample_pair(bst, rg["base_seed"])
         cands = []
         for state in (True, False):
-            pp = partner_pair(S[rg["setting_id"]]["rule"], bp, state, rg["salt"])
+            pp = partner_pair(S[rg["setting_id"]]["rule"], bp, state, rg["salt"], rg.get("pick", "random"))
             cands += [pp["pos"], pp["twin"]]
     else:
         p = sample_pair(S[rg["setting_id"]], scene_json["seed"], control=rg["control"])

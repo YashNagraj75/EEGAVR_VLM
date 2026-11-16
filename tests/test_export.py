@@ -14,8 +14,8 @@ def _eq(sid, n=60):
         p = make_pair(st, i)
         sc += [p["pos"], p["twin"]]
         y += [True, False]
-    L, _ = literal_matrix(sc)
-    return equivalence_mask(L, np.array(y))
+    L, names = literal_matrix(sc)
+    return equivalence_mask(L, np.array(y), names, st["rule"])
 
 
 def test_problem_structure_and_regeneration():

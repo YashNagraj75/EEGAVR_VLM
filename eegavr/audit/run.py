@@ -18,6 +18,11 @@ from .probes import run_probes, run_univariate
 SIZES = (224, 448)
 
 
+def rows_scene_stub():
+    from ..generator.scene import make_obj
+    return {"objects": [make_obj("circle", 0.1, False, 0.5, 0.5, 0, 4.0)]}
+
+
 def make_pair(st, i, split="audit"):
     # the i-th pair of a setting (partner settings derive from the B setting's pairs)
     if "partner_of" in st:
@@ -73,9 +78,9 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
         d5[s]["all_ok"] = float(np.mean([all(c[k] for k in ("no_clip", "components_ok", "gap_ok", "stroke_ok"))
                                          for c in ch]))
     L = np.array([r["lit"] for r in rows]).T
-    eq = equivalence_mask(L, y.astype(bool))
+    eq = equivalence_mask(L, y.astype(bool), literal_matrix([rows_scene_stub()])[1], st["rule"])
     os.makedirs(out_dir, exist_ok=True)
-    np.savez_compressed(f"{out_dir}/{sid}_pool.npz", eq=eq, pix=P, sym=np.array([r["sym"] for r in rows]), y=y, g=g)
+    np.savez_compressed(f"{out_dir}/{sid}_pool.npz", eq=eq, L=L, pix=P, sym=np.array([r["sym"] for r in rows]), y=y, g=g)
     ink = np.array([r["ink"] for r in rows])
     rtype = st["type"]
     uni = None
