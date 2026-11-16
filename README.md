@@ -8,6 +8,7 @@ Controlled Bongard-style stimuli and VLM evaluation for the EEGAVR project
 - `eegavr/eval/` — VLM evaluation harness (Qwen3-VL-8B-Instruct, InternVL3.5-8B)
 - `configs/` — rule settings, split sizes, model configs
 - `docs/DATA_CONTRACT.md` — the on-disk format shared by the generator and the harness
+- `docs/EVAL_HARNESS.md` — harness design (prompts, resolutions, parsing, scoring); `docs/GPU_RUNBOOK.md` — A6000 run instructions
 - `scripts/` — command-line entry points
 
 The design follows the "Controlled stimulus curation protocol" (EEGAVR wiki).
