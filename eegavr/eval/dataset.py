@@ -8,8 +8,7 @@ from PIL import Image
 SUPPORTED_CONTRACT_VERSIONS = {1, "1", "v1"}
 SPLITS = ("validation", "test_id", "ood_count", "ood_count_control", "ood_render")
 
-# Problem-level fields that are scoring/analysis only (contract "What the harness may read",
-# plus answer-bearing fields the contract implies: positive_side, test[*].answer).
+# Scoring-only problem fields (contract list plus the answer-bearing positive_side).
 SCORING_ONLY_KEYS = frozenset({
     "rule_id", "type", "rule_setting_id", "knob", "partner_problem_id", "twin_map",
     "positive_side", "split", "problem_id",
@@ -31,8 +30,7 @@ class ContractError(ValueError):
 
 @dataclass(frozen=True)
 class PromptView:
-    # The only problem content a prompt builder may see. Panel ids are kept for image lookup
-    # and must never be rendered into prompt text (they can encode the rule id).
+    # Prompt-visible problem content; panel ids are for image lookup only, never prompt text.
     left: tuple
     right: tuple
     test: tuple

@@ -9,9 +9,7 @@ from .prompts import build_prompt
 from .runner import Stage
 from .vision import SPECS, image_cost
 
-# Throughput ASSUMPTIONS for an 8B VLM in bf16 under vLLM on one A6000 (48 GB); not measured.
-# prefill_tps = effective prompt tokens/s incl. vision encoder at batch 16; replace with
-# calibrate() numbers from the smoke-test log before trusting the plan.
+# Assumed (unmeasured) A6000 throughput; replace with calibrate() numbers from the smoke log.
 ASSUMED = {
     "qwen3vl": {"prefill_tps": 2500.0, "decode_tps": 600.0, "out_tokens": 60, "load_s": 420},
     "internvl": {"prefill_tps": 2500.0, "decode_tps": 600.0, "out_tokens": 60, "load_s": 420},

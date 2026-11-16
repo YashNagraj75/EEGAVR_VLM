@@ -6,9 +6,6 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
-# Tiny contract-v1 fixture set for harness tests: rules A1 (some shape filled), B1 (triangle
-# above circle) with "A1p" partners that reuse the B1 panels (pairing logic only), C1 (3 shapes).
-# Not real stimuli: no audits, no twin-exactness guarantees beyond what the tests need.
 SHAPES = {"circle": (0, False), "square": (4, False), "triangle": (3, False)}
 
 
@@ -94,6 +91,7 @@ def _base_scene(rng, rule, positive):
 
 
 def make_mock_set(root, n_per_rule=4, seed=0, splits=("validation", "test_id", "ood_render")):
+    # Builds a tiny contract-v1 fixture set (A1, B1 with reused-panel A1p partners, C1); not real stimuli.
     root, rng = Path(root), random.Random(seed)
     for d in ("panels", "masks", "scenes", "problems", "splits", "audit"):
         (root / d).mkdir(parents=True, exist_ok=True)

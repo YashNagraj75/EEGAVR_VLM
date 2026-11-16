@@ -49,8 +49,7 @@ ANSWER = (
 
 @dataclass
 class Prompt:
-    # Model-agnostic prompt: ordered ("text", str) / ("image", PIL.Image) parts.
-    # meta is for logging only; model adapters must read `parts` and nothing else.
+    # Ordered text/image parts; meta is for logging only and never reaches a model.
     parts: list
     meta: dict = field(default_factory=dict)
 

@@ -8,12 +8,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from eegavr.eval.budget import calibrate, format_table, plan_table, text_tokens  # noqa: E402
-from eegavr.eval.dataset import EvalSet  # noqa: E402
-from eegavr.eval.prompts import build_prompt  # noqa: E402
-from eegavr.eval.runner import Stage, run_stage, write_run_manifest  # noqa: E402
-from eegavr.eval.scoring import score_dir  # noqa: E402
-from eegavr.eval.vision import SPECS, image_cost, layout_summary  # noqa: E402
+from eegavr.eval.budget import calibrate, format_table, plan_table, text_tokens
+from eegavr.eval.dataset import EvalSet
+from eegavr.eval.prompts import build_prompt
+from eegavr.eval.runner import Stage, run_stage, write_run_manifest
+from eegavr.eval.scoring import score_dir
+from eegavr.eval.vision import SPECS, image_cost, layout_summary
 
 
 def _model(args):
@@ -31,8 +31,7 @@ def _tokenizer(model):
 
 
 def token_check(model, evalset, stages, out, n=3):
-    # Logged prompt tokens minus (tokenizer count of text + predicted visual tokens). The residual
-    # should be the same small chat-template constant for every stage if resolutions are as designed.
+    # Prints logged minus predicted prompt tokens; a constant residual confirms the image sizes.
     tok = _tokenizer(model)
     spec = SPECS[model.spec_key]
     from eegavr.eval.runner import stage_log_path

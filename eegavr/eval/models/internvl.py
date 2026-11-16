@@ -1,8 +1,8 @@
 from .base import VLM, sampling_info
 from ._common import content_list, hf_generate_one, model_revision, versions, vllm_generate
 
-REPO_VLLM = "OpenGVLab/InternVL3_5-8B"      # original format, InternVLChatModel (trust_remote_code)
-REPO_HF = "OpenGVLab/InternVL3_5-8B-HF"     # transformers-native InternVLForConditionalGeneration
+REPO_VLLM = "OpenGVLab/InternVL3_5-8B"
+REPO_HF = "OpenGVLab/InternVL3_5-8B-HF"
 STOP_TOKENS = ("<|endoftext|>", "<|im_start|>", "<|im_end|>", "<|end|>")
 
 
@@ -12,8 +12,7 @@ def to_text(prompt):
 
 
 class VllmModel(VLM):
-    # GPU-host only (unverified in the sandbox). max_dynamic_patch=12 is the model default; the
-    # harness pre-sizes images (448 px panels, 1792x1344 composite) so tiling is fixed: 1 / 4x3+thumb.
+    # vLLM engine for InternVL3.5 (original-format repo); unverified without a GPU.
     tag, spec_key = "internvl3.5-8b", "internvl"
 
     def __init__(self, path, max_tokens=256, max_model_len=16384, gpu_memory_utilization=0.90,

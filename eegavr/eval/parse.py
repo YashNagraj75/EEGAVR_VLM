@@ -1,8 +1,7 @@
 import json
 import re
 
-# Status, from best to worst. Primary scoring accepts json/json_repaired/regex; partial and
-# unparsable panels count as wrong. Strict-JSON compliance is reported separately.
+# Parse statuses from best to worst; partial/unparsable/error panels score as wrong.
 STATUSES = ("json", "json_repaired", "regex", "partial", "unparsable", "error")
 
 _THINK = re.compile(r"<think>.*?</think>", re.S | re.I)

@@ -8,8 +8,7 @@ RESAMPLE = Image.Resampling.BOX  # area averaging; the generator's 5d check shou
 
 @dataclass(frozen=True)
 class VisionSpec:
-    # Per-model image geometry. The harness resizes/pads itself so the model processor's own
-    # resize is a no-op (Qwen: dims are multiples of 32; InternVL: exact 448-px tile grids).
+    # Per-model image geometry chosen so the model processor's own resize is a no-op.
     family: str
     separate_panel_px: int
     composite_panel_px: int
