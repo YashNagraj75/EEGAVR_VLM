@@ -30,7 +30,7 @@ def _clone(objs):
 
 # ---------- A1: some shape is filled; twin un-fills it
 def _a1(rng, st):
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     lo, hi = max(st["knob"][0], st["size_range"][0]), min(st["knob"][1], st["size_range"][1])
     t = S.random_obj(rng, SHAPES, (lo, hi), stroke, fill=True, role="t1")
     if not in_panel(t):
@@ -63,7 +63,7 @@ A6_DISTRACTORS = {"FS": ("square", True), "OT": ("triangle", False), "OS": ("squ
 
 
 def _a6(rng, st):
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     sr = st["size_range"]
     st_ = _u(rng, sr)
     ss = a6_square_size(st_, stroke)
@@ -132,7 +132,7 @@ def rotation_for_extent(rng, shape, size, target_h):
 
 def _b1(rng, st):
     # twin swaps the two roles' ink-centroid y (x kept); extent predicate checked on both panels
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     fill = bool(rng.random() < 0.5) if st.get("role_fill") != "outline" else False
     sz = equal_ink_partner(rng, "circle", "triangle", st["size_range"], fill, stroke,
                            st.get("role_ink_jitter", 0.0), st.get("role_ink_offset", 0.0))
@@ -213,7 +213,7 @@ def _place_outside(rng, objs, I, st, tries=300):
 
 def _b3(rng, st):
     # constructive: inner circumcircle placed inside the outer's largest inscribed disk shrunk by the margin
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     sr = st["size_range"]
     outer_range = st.get("b3_outer_range", sr)
     m = _u(rng, st["knob"])
@@ -317,7 +317,7 @@ def _spanning_distractors(rng, objs, roles, size_range, stroke, tries=80):
 
 
 def _b4(rng, st):
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     fill = bool(rng.random() < 0.5)
     sh1, sh2 = SHAPES[int(rng.integers(len(SHAPES)))], SHAPES[int(rng.integers(len(SHAPES)))]
     sz = equal_ink_partner(rng, sh1, sh2, st["size_range"], fill, stroke)
@@ -384,7 +384,7 @@ def _c1(rng, st, control):
     # 3 vs 4 shapes, midpoint design: sizes and layout scale symmetrically about a midpoint, sign c per pair
     if control not in ("up", "down"):
         return _c1_simple(rng, st, control)
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     sr = st["size_range"]
     c = 1.0 if control == "up" else -1.0
     ls = c * rng.uniform(*st["c1_size_shift"]) - st["c1_size_offset"]
@@ -420,7 +420,7 @@ def _c1(rng, st, control):
 
 def _c1_simple(rng, st, control):
     # earlier C1 designs (equal_size / equal_ink / inverse_ink), kept for the logged audit runs
-    stroke = sample_stroke(rng)
+    stroke = sample_stroke(rng, st["style"])
     sr = st["size_range"]
     s = _u(rng, sr)
     objs = []

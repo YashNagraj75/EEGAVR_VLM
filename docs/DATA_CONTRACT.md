@@ -67,3 +67,24 @@ Any change bumps `contract_version` in `manifest.json`.
 ## What the harness may read
 Everything except `role` (scenes), `truth` (scenes), `twin_map`, `rule_id`, `type`, `rule_setting_id`, `knob`, `partner_problem_id` when building prompts.
 Those fields are for scoring and analysis only.
+
+## Changes in contract 1.1 (2026-11-16, generator track; all additive)
+`manifest.json` carries `"contract_version": "1.1"`. A v1 reader that ignores unknown keys can read a 1.1 set unchanged,
+except for an explicit version check (the eval harness accepts only `1`; add `"1.1"` to its supported versions).
+- Scene objects: `size` = perimeter-equivalent radius (outline perimeter = 2*pi*size; sampled in 0.06–0.16).
+  `radius` keeps its v1 meaning (circumradius about the area centroid). `mirror` (bool) = reflected before rotation;
+  only meaningful for chiral shapes. `symmetry_order` is 0 for the circle (orientation undefined). Shape names:
+  `circle, square, triangle, pentagon, cross, L, right_trapezoid, irregular_pentagon`.
+- Scene: `regen` = what `eegavr.generator.assemble.regenerate()` needs besides `seed`
+  (`setting_id`, `split`, `counter`, `control`; for A-partner panels also `base_setting_id`, `base_seed`, `salt`).
+  Scoring/regeneration only: never show it to a solver.
+- `seed` of a panel is the seed of its twin pair (both panels of a pair share it), so seeds reveal pairing; never show them.
+- Problems: unchanged keys. `described` gives x, y and size (= `radius`) to 3 decimals, rotation in whole degrees
+  (omitted for circles) and "mirrored" for reflected chiral shapes. `symbolic` objects add `mirrored` for chiral shapes.
+  Symmetric relations (`touching`, `collinear`, `same_shape`) are listed once with ascending ids; `between` = `[m, a, b]`
+  with a < b; `collinear` = every centroid within 0.01 of the line through the other two.
+- Scoring-only problem fields also include `positive_side` and `test[*].answer`.
+- `audit/` also holds `audit_runs_log.jsonl` (every audit run, all generator versions) and `rendering_check.json`
+  (per-panel 5d on the exported set, PIL BOX, 224/256/448 px).
+- `manifest.json` adds `a_partner_settings`, `tuning`, `render_styles`, `not_applicable`, `audit_status`,
+  `dropped`, `assembly_stats`.

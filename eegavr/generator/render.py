@@ -15,7 +15,7 @@ def _polys(g):
 
 def _hatch(o):
     # OOD style: filled region drawn as 45-degree hatching inside a solid 1.5x boundary
-    p, w = poly(o), stroke_w(o) * 1.5
+    p, w = poly(o), stroke_w(o)
     x0, y0, x1, y1 = p.bounds
     d = (x1 - x0) + (y1 - y0)
     lines = [LineString([(x0 + t, y0), (x0 + t - d, y0 + d)]) for t in np.arange(0, 2 * d, HATCH_SPACING)]
@@ -59,5 +59,7 @@ def render_mask(scene, size=PANEL_PX):
     return np.asarray(m, dtype=np.uint8)
 
 
-def downsample(img, size):
-    return np.asarray(Image.fromarray(img).resize((size, size), Image.BICUBIC), dtype=np.uint8)
+def downsample(img, size, method="box"):
+    # area averaging (PIL BOX) as in the eval harness; bicubic kept for the logged 0.2.1 setting audits
+    f = Image.BOX if method == "box" else Image.BICUBIC
+    return np.asarray(Image.fromarray(img).resize((size, size), f), dtype=np.uint8)

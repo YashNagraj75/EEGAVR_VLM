@@ -67,8 +67,6 @@ def stroke_w(o):
 def ink_geom(o, style="default"):
     # exact drawn ink: filled = polygon grown by half a stroke; outline = ring of stroke width
     p, w = poly(o), stroke_w(o)
-    if style == "hatch":
-        w = w * 1.5
     if o["fill"]:
         return p.buffer(w / 2, join_style="mitre", mitre_limit=3.0)
     return p.exterior.buffer(w / 2, join_style="mitre", mitre_limit=3.0)
@@ -104,8 +102,13 @@ def moved(o, x=None, y=None):
     return finalize(n)
 
 
-def sample_stroke(rng):
-    return float(STROKE_BASE_PX * rng.uniform(1 - STROKE_JITTER, 1 + STROKE_JITTER))
+HATCH_STROKE = 1.5
+
+
+def sample_stroke(rng, style="default"):
+    # per-panel stroke width in px (the drawn width; the hatch style draws 1.5x wider strokes)
+    k = HATCH_STROKE if style == "hatch" else 1.0
+    return float(k * STROKE_BASE_PX * rng.uniform(1 - STROKE_JITTER, 1 + STROKE_JITTER))
 
 
 def random_obj(rng, shapes, size_range, stroke_px, fill=None, role="distractor"):

@@ -1,4 +1,5 @@
 import argparse
+import glob
 import json
 import os
 import subprocess
@@ -28,6 +29,7 @@ def main():
     ap.add_argument("--rules", default="A1,A6,B1,B3,B4,C1")
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--dropped", default="{}")
     a = ap.parse_args()
     root = a.out
     ensure_dirs(root)
@@ -78,7 +80,10 @@ def main():
            "model_input_sizes": [224, 448], "render_styles": {"default": "solid black strokes and fills",
            "hatch": "filled regions as 45-degree hatching (spacing 0.025 panel width, line = 1.5x stroke) inside a "
                     "solid boundary; all strokes 1.5x the panel stroke width"},
-           "not_applicable": {"C1": ["ood_count"]}, "assembly_stats": stats}
+           "not_applicable": {"C1": ["ood_count"]}, "assembly_stats": stats,
+           "audit_status": {os.path.basename(f)[:-5]: json.load(open(f))["pass"]
+                            for f in sorted(glob.glob(f"{a.audit}/*.json")) if not f.endswith("_log.json")},
+           "dropped": json.loads(a.dropped)}
     with open(f"{root}/manifest.json", "w") as f:
         json.dump(man, f, indent=1)
     print(json.dumps({k: (v["problems"], round(v["5c_resample_rate"], 3), v["partner_5c_rejected"]) for k, v in stats.items()}))

@@ -33,10 +33,12 @@ def equivalence_mask(L_pool, y_pool):
 
 
 def competing(L_prob, y_prob, eqmask, names):
-    # non-equivalent candidates that sort (or anti-sort) all panels of one problem
+    # candidates sorting all panels, excluding those equivalent to, or containing a literal equivalent to, the rule
     cnt = _pair_counts(L_prob, y_prob)
     n = len(y_prob)
-    hit = ((cnt == n) | (cnt == 0)) & ~eqmask
+    d = np.diag(eqmask)
+    allowed = eqmask | d[:, None] | d[None, :]
+    hit = ((cnt == n) | (cnt == 0)) & ~allowed
     P = len(names)
     lit = names + [f"NOT {x}" for x in names]
     ii, jj = np.nonzero(np.triu(hit))

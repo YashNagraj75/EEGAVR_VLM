@@ -7,9 +7,9 @@ from ..generator.scene import poly, stroke_w
 INK_THR = 160
 
 
-def check_panel(img512, sc, size):
+def check_panel(img512, sc, size, method="box"):
     # 5d at one model input size: border clear, expected ink components, stroke and gaps >= 2 px
-    im = downsample(img512, size)
+    im = downsample(img512, size, method)
     fg = im < INK_THR
     border = fg[:2].any() or fg[-2:].any() or fg[:, :2].any() or fg[:, -2:].any()
     lab, n = ndimage.label(fg, structure=np.ones((3, 3)))

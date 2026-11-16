@@ -24,13 +24,14 @@ ID_BINS = {
     "A6": [(0, 0), (1, 1), (2, 2)],
     "B1": [(0.03, 0.06), (0.06, 0.12), (0.12, 0.24)],
     "B3": [(0.03, 0.045), (0.045, 0.06), (0.06, 0.08)],
-    "B4": [(0.010, 0.015), (0.015, 0.020)],
+    "B4": [(0.010, 0.015)],
     "C1": [(3, 3)],
 }
-FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.03, 0.08), "B4": (0.010, 0.020), "C1": (3, 3)}
+FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.03, 0.08), "B4": (0.010, 0.015), "C1": (3, 3)}
 TUNING = {
+    "A6": {"a6_pool": ["FS", "OT", "OS"]},
     "B1": {"role_fill": "outline", "role_ink_jitter": 0.03, "role_ink_offset": 0.005, "n_objects_id": (4, 4)},
-    "B3": {"twin_within_bbox": True},
+    "B3": {"twin_within_bbox": True, "b3_twin_near": 0.06},
     "B4": {"symmetric_separation": True, "stroke_contact_eps_px": 0.25, "n_objects_id": (4, 4),
            "distractors_span_roles": True},
     "C1": {"c1_controls": ["up", "down"], "c1_size_shift": (0.10, 0.30), "c1_size_offset": 0.05,
