@@ -80,7 +80,7 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
     L = np.array([r["lit"] for r in rows]).T
     eq = equivalence_mask(L, y.astype(bool), literal_matrix([rows_scene_stub()])[1], st["rule"])
     os.makedirs(out_dir, exist_ok=True)
-    np.savez_compressed(f"{out_dir}/{sid}_pool.npz", eq=eq, L=L, pix=P, sym=np.array([r["sym"] for r in rows]), y=y, g=g)
+    np.savez_compressed(f"{out_dir}/{sid}_pool.npz", eq=eq["eq"], own=eq["own"], L=L, pix=P, sym=np.array([r["sym"] for r in rows]), y=y, g=g)
     ink = np.array([r["ink"] for r in rows])
     rtype = st["type"]
     uni = None
@@ -122,3 +122,21 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
                             {k: [v["worst_cue"], v["worst_acc"], v["worst_ci90"]] for k, v in uni.items()},
                             "5d_448_all_ok": d5[448]["all_ok"], "pass": passed, "time": time.strftime("%F %T")}) + "\n")
     return rep
+
+
+def _pool_lits(args):
+    sid, i = args
+    st = all_settings()[sid]
+    p = make_pair(st, i)
+    L, _ = literal_matrix([p["pos"], p["twin"]])
+    return L
+
+
+def pool_equivalence(sid, n_pairs=1000, workers=8):
+    # 5c reference mask from the setting's audit pairs (same seeds as the audit), current candidate list
+    with Pool(workers) as pool:
+        Ls = pool.map(_pool_lits, [(sid, i) for i in range(n_pairs)], chunksize=16)
+    L = np.concatenate(Ls, axis=1)
+    y = np.tile([True, False], n_pairs)
+    names = literal_matrix([rows_scene_stub()])[1]
+    return equivalence_mask(L, y, names, all_settings()[sid]["rule"])

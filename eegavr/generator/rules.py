@@ -472,7 +472,42 @@ def _c1_simple(rng, st, control):
     return pos, twin, 3, declared, {"control": control}
 
 
-SAMPLERS = {"A1": _a1, "A6": _a6, "B1": _b1, "B3": _b3, "B4": _b4}
+C1B_REPLACE = ("circle", "square", "pentagon", "cross")
+NON_TRIANGLES = [x for x in SHAPES if x != "triangle"]
+
+
+def _c1b(rng, st):
+    # exactly 3 triangles among n outline shapes; twin turns one triangle into a non-chiral non-triangle in place
+    stroke = sample_stroke(rng, st["style"])
+    n = _n(rng, st)
+    sr = st["size_range"]
+    objs = []
+    for k in range(n):
+        sh = "triangle" if k < 3 else NON_TRIANGLES[int(rng.integers(len(NON_TRIANGLES)))]
+        for _ in range(60):
+            o = make_obj(sh, _u(rng, sr), False, _u(rng, POS_RANGE), _u(rng, POS_RANGE), rng.uniform(0, 360), stroke,
+                         "distractor", mirror=bool(rng.random() < .5))
+            if in_panel(o) and all(gap_ok(o, q) for q in objs):
+                objs.append(o)
+                break
+        else:
+            return None
+    order = rng.permutation(n)
+    objs = [objs[i] for i in order]
+    tri = [i for i, o in enumerate(objs) if o["shape"] == "triangle"]
+    j = tri[int(rng.integers(len(tri)))]
+    objs[j] = dict(objs[j], role="t1")
+    pos = index(_clone(objs))
+    twin = _clone(pos)
+    new = C1B_REPLACE[int(rng.integers(len(C1B_REPLACE)))]
+    twin[j] = finalize(dict(twin[j], shape=new, mirror=False, rotation=0.0 if new == "circle" else twin[j]["rotation"]))
+    if not layout_ok(twin):
+        return None
+    dec = {(j, "shape")} | ({(j, "rotation")} if new == "circle" and pos[j]["rotation"] != 0.0 else set())
+    return pos, twin, 3, dec, {}
+
+
+SAMPLERS = {"A1": _a1, "A6": _a6, "B1": _b1, "B3": _b3, "B4": _b4, "C1b": _c1b}
 
 
 def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):
@@ -496,7 +531,7 @@ def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):
         v.append("positive fails rule")
     if RULE_FN[rule](twin):
         v.append("twin still satisfies rule")
-    check_ink = rule in ("A6", "B1", "B3", "B4") or (rule == "C1" and control == "equal_ink")
+    check_ink = rule in ("A6", "B1", "B3", "B4", "C1b", "A2") or (rule == "C1" and control == "equal_ink")
     if rule == "C1" and control == "inverse_ink":
         check_ink = False
     if check_ink:

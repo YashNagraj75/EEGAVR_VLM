@@ -1,6 +1,6 @@
 from .scene import poly, stroke_w, CONCAVE
 
-PILOT_RULES = ("A1", "A6", "B1", "B3", "B4", "C1")
+PILOT_RULES = ("A1", "A6", "B1", "B3", "B4", "C1", "C1b", "A2")
 TOUCH_EPS = 1e-6
 
 
@@ -74,11 +74,20 @@ def c1(scene, k=3):
     return len(scene["objects"]) == k
 
 
+def c1b(scene, k=3):
+    return sum(o["shape"] == "triangle" for o in scene["objects"]) == k
+
+
+def a2(scene):
+    return any(o["shape"] == "triangle" for o in scene["objects"])
+
+
 def truth(scene):
-    return {"A1": a1(scene), "A6": a6(scene), "B1": b1(scene), "B3": b3(scene), "B4": b4(scene), "C1": c1(scene)}
+    return {"A1": a1(scene), "A6": a6(scene), "B1": b1(scene), "B3": b3(scene), "B4": b4(scene), "C1": c1(scene),
+            "C1b": c1b(scene), "A2": a2(scene)}
 
 
-RULE_FN = {"A1": a1, "A6": a6, "B1": b1, "B3": b3, "B4": b4, "C1": c1}
+RULE_FN = {"A1": a1, "A6": a6, "B1": b1, "B3": b3, "B4": b4, "C1": c1, "C1b": c1b, "A2": a2}
 
 
 def candidate_predicates(extended=True):
@@ -99,7 +108,10 @@ def candidate_predicates(extended=True):
     for k in range(1, 10):
         C[f"C:count=={k}"] = lambda s, k=k: len(s["objects"]) == k
         C[f"C:count>={k}"] = lambda s, k=k: len(s["objects"]) >= k
-    C["A2:triangle present"] = lambda s: any(o["shape"] == "triangle" for o in s["objects"])
+    C["A2:triangle present"] = a2
+    for k in range(0, 6):
+        C[f"C1b:triangle count=={k}"] = lambda s, k=k: c1b(s, k)
+        C[f"C1b:triangle count>={k}"] = lambda s, k=k: sum(o["shape"] == "triangle" for o in s["objects"]) >= k
     for t in (0.10, 0.12, 0.14):
         C[f"A3:size>={t} present"] = lambda s, t=t: any(o["size"] >= t for o in s["objects"])
     C["A5:concave present"] = lambda s: any(o["shape"] in CONCAVE for o in s["objects"])

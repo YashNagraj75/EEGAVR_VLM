@@ -8,6 +8,7 @@ from multiprocessing import Pool
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from eegavr.generator.assemble import build_job
+from eegavr.audit.run import pool_equivalence
 from eegavr.generator.export import scene_json, write_panel, ensure_dirs
 from eegavr.generator.settings import (all_settings, RULE_TYPE, RULE_PROGRAM, KNOB_NAME, PARTNERS, TUNING, audit_tier,
                                       ood_settings, NO_OOD_COUNT)
@@ -36,7 +37,9 @@ def main():
     root = a.out
     ensure_dirs(root)
     S = all_settings()
-    eq = {sid: np.load(f"{a.audit}/{sid}_pool.npz")["eq"] for sid in S if os.path.exists(f"{a.audit}/{sid}_pool.npz")}
+    need = [sid for sid in S if S[sid]["rule"] in a.rules.split(",") + [PARTNERS.get(r) for r in a.rules.split(",")]
+            and os.path.exists(f"{a.audit}/{sid}.json")]
+    eq = {sid: pool_equivalence(sid, workers=a.workers) for sid in need}
     reps = {os.path.basename(f)[:-5]: json.load(open(f)) for f in glob.glob(f"{a.audit}/*.json")}
     tiers = {sid: audit_tier(r) for sid, r in reps.items()}
     excl = [sid for sid, t in tiers.items() if t == "excluded"]

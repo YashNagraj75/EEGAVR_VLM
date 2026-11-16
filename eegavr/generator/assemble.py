@@ -6,7 +6,7 @@ from .partners import partner_pair
 from ..audit.competing import literal_matrix, competing
 
 N_SUPPORT = 6
-MAX_ATTEMPTS = 14
+MAX_ATTEMPTS = 40
 PARTNER_TRIES = 20
 
 
@@ -84,7 +84,7 @@ def build_problem(rule, split, k, eqmasks, stats, tuning=None, start=0):
     for att in range(start, MAX_ATTEMPTS):
         pairs = []
         for j in range(N_SUPPORT + 1):
-            c = k * 100 + att * 7 + j
+            c = k * 1000 + att * 7 + j
             p = sample_pair(st, seed_for(split, sid, c), control=ctrl)
             p["counter"], p["split"] = c, split
             p["meta"]["control"] = ctrl

@@ -1,6 +1,6 @@
 import numpy as np
 from .rules import _finish, check_twin, _clone
-from .scene import index
+from .scene import index, finalize
 
 
 def partner_pair(partner_rule, b_pair, state, salt=0, pick="random"):
@@ -18,6 +18,14 @@ def partner_pair(partner_rule, b_pair, state, salt=0, pick="random"):
         twin = _clone(pos)
         twin[j] = dict(twin[j], fill=False)
         declared, knob = {(j, "fill")}, objs[j]["size"]
+    elif partner_rule == "A2":
+        objs = [dict(o, fill=b) for o, b in zip(objs, [q["fill"] for q in base["objects"]])]
+        tri = [k for k, o in enumerate(objs) if o["shape"] == "triangle"]
+        for k in tri:
+            objs[k]["role"] = "t1"
+        pos = index(_clone(objs))
+        twin = [finalize(dict(o, shape="pentagon")) if k in tri else dict(o) for k, o in enumerate(pos)]
+        declared, knob = {(k, "shape") for k in tri}, float(len(objs) - len(tri))
     else:
         jt, js = b_pair["meta"]["slot_T"], b_pair["meta"]["slot_S"]
         objs[jt].update(fill=True, role="t1")
