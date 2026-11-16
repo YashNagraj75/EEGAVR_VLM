@@ -292,3 +292,20 @@ def test_cli_end_to_end(mockset, tmp_path):
     r = subprocess.run([py, script, "preview", "--set", str(mockset), "--problem", "B1-test_id-0000",
                         "--dump", str(tmp_path / "pv"), "--spec", "internvl"], capture_output=True, text=True)
     assert r.returncode == 0 and (tmp_path / "pv" / "image_00.png").exists()
+
+
+def test_plan_executor_with_mock_plan(mockset, tmp_path):
+    plan = {"name": "mock", "hours": 1.0, "reserve_hours": 0.0,
+            "smoke": {"split": "validation", "max_problems": 3, "stages": ["described"]},
+            "stages": [{"priority": 1, "model": "mock", "stage": "visual:separate:test_id"},
+                       {"priority": 2, "model": "mock", "stage": "symbolic:ood_render"}]}
+    pf = tmp_path / "plan.json"
+    pf.write_text(json.dumps(plan))
+    out = tmp_path / "runs"
+    r = subprocess.run([sys.executable, str(REPO / "scripts" / "run_eval.py"), "plan", "--set", str(mockset),
+                        "--out", str(out), "--plan", str(pf), "--model", "mock", "--mock-mode", "left",
+                        "--model-dir", str(tmp_path)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    rows, _ = _rows(out)
+    assert {(x["condition"], x["split"], x["n_puzzles"]) for x in rows} == {("visual", "test_id", 16), ("symbolic", "ood_render", 16)}
+    assert all(x["panel_acc"] == 0.5 for x in rows)
