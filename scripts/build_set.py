@@ -9,7 +9,8 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from eegavr.generator.assemble import build_job
 from eegavr.generator.export import scene_json, write_panel, ensure_dirs
-from eegavr.generator.settings import all_settings, RULE_TYPE, RULE_PROGRAM, KNOB_NAME, PARTNERS, TUNING
+from eegavr.generator.settings import (all_settings, RULE_TYPE, RULE_PROGRAM, KNOB_NAME, PARTNERS, TUNING, audit_tier,
+                                      ood_settings, NO_OOD_COUNT)
 from eegavr.generator.version import GENERATOR_VERSION, CONTRACT_VERSION
 
 SPLITS = {"validation": 50, "test_id": 100, "ood_count": 100, "ood_count_control": 100, "ood_render": 100}
@@ -30,13 +31,24 @@ def main():
     ap.add_argument("--scale", type=float, default=1.0)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--dropped", default="{}")
+    ap.add_argument("--skip", default="", help="comma list of rule:split combinations not to build")
     a = ap.parse_args()
     root = a.out
     ensure_dirs(root)
     S = all_settings()
     eq = {sid: np.load(f"{a.audit}/{sid}_pool.npz")["eq"] for sid in S if os.path.exists(f"{a.audit}/{sid}_pool.npz")}
-    jobs = [(r, sp, max(1, int(n * a.scale)), eq, {}) for r in a.rules.split(",") for sp, n in SPLITS.items()
-            if not (r == "C1" and sp == "ood_count")]
+    reps = {os.path.basename(f)[:-5]: json.load(open(f)) for f in glob.glob(f"{a.audit}/*.json")}
+    tiers = {sid: audit_tier(r) for sid, r in reps.items()}
+    excl = [sid for sid, t in tiers.items() if t == "excluded"]
+    skip = {tuple(x.split(":")) for x in a.skip.split(",") if x}
+    for r in a.rules.split(","):
+        for sp, st in ood_settings(r).items():
+            if tiers.get(st["id"]) == "excluded":
+                skip.add((r, sp))
+    tune = {"_exclude": excl, "_render_check": [sid for sid, t in tiers.items() if t == "marginal" and sid.endswith("-or")]}
+    jobs = [(r, sp, max(1, int(n * a.scale)), eq, tune) for r in a.rules.split(",") for sp, n in SPLITS.items()
+            if sp not in ("ood_count",) or r not in NO_OOD_COUNT
+            if (r, sp) not in skip]
     with Pool(a.workers) as pool:
         res = pool.map(build_job, jobs, chunksize=1)
         tasks = []
@@ -58,6 +70,7 @@ def main():
             "5c_attempts": s["attempts"], "5c_rejected": s["rejected"],
             "5c_resample_rate": s["rejected"] / max(s["attempts"], 1), "kept_rate": s["pairs"] / max(s["draws"], 1),
             "partner_5c_attempts": ps["attempts"], "partner_5c_rejected": ps["rejected"],
+            "render_rejected": s.get("render_rejected", 0),
             "5c_examples": s["examples"][:5], "partner_5c_examples": ps["examples"][:5]}
     for sp, ids in splits.items():
         with open(f"{root}/splits/{sp}.txt", "w") as f:
@@ -80,9 +93,12 @@ def main():
            "model_input_sizes": [224, 448], "render_styles": {"default": "solid black strokes and fills",
            "hatch": "filled regions as 45-degree hatching (spacing 0.025 panel width, line = 1.5x stroke) inside a "
                     "solid boundary; all strokes 1.5x the panel stroke width"},
-           "not_applicable": {"C1": ["ood_count"]}, "assembly_stats": stats,
-           "audit_status": {os.path.basename(f)[:-5]: json.load(open(f))["pass"]
-                            for f in sorted(glob.glob(f"{a.audit}/*.json")) if not f.endswith("_log.json")},
+           "not_applicable": {r: ["ood_count"] for r in NO_OOD_COUNT}, "assembly_stats": stats,
+           "audit_status": {sid: {"pass": r["pass"], "audit_tier": tiers[sid],
+                                  "5a_pass_probe": [r["5a"]["pass_set"]["best_acc"], r["5a"]["pass_set"]["best_ci90"]],
+                                  "5d_224": r["5d"].get("224", r["5d"].get(224))["all_ok"]}
+                            for sid, r in sorted(reps.items())},
+           "skipped_rule_splits": sorted(f"{r}:{sp}" for r, sp in skip),
            "dropped": json.loads(a.dropped)}
     with open(f"{root}/manifest.json", "w") as f:
         json.dump(man, f, indent=1)

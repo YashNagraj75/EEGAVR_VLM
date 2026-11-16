@@ -30,8 +30,7 @@ FAMILY = {"A1": ("A1:",), "A6": ("A6:",), "B1": ("B1:", "B1':"), "B3": ("B3:",),
 
 
 def equivalence_mask(L_pool, y_pool, names=None, rule=None):
-    # candidates treated as the intended rule: equivalent on the pool, containing an equivalent literal, or built
-    # only from threshold variants of the rule's own predicate and pool-constant literals
+    # candidates counted as the intended rule (pool-equivalent, an equivalent literal, or own-family/constant literals)
     agree = _pair_counts(L_pool, y_pool) / len(y_pool)
     eq = (agree >= EQUIV) | (agree <= 1 - EQUIV)
     d = np.diag(eq).copy()

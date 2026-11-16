@@ -28,7 +28,6 @@ def _clone(objs):
     return [dict(o) for o in objs]
 
 
-# ---------- A1: some shape is filled; twin un-fills it
 def _a1(rng, st):
     stroke = sample_stroke(rng, st["style"])
     lo, hi = max(st["knob"][0], st["size_range"][0]), min(st["knob"][1], st["size_range"][1])
@@ -45,7 +44,6 @@ def _a1(rng, st):
     return pos, twin, t["size"], {(0, "fill")}, {}
 
 
-# ---------- A6: a filled triangle is present; twin swaps fills between triangle and square
 def a6_square_size(tri_size, stroke):
     # square size so that (filled tri + outline sq) and (outline tri + filled sq) carry equal ink
     T = make_obj("triangle", tri_size, True, .5, .5, 0, stroke)
@@ -87,7 +85,6 @@ def _a6(rng, st):
     return pos, twin, k, {(0, "fill"), (1, "fill")}, {}
 
 
-# ---------- B1: triangle entirely above circle; twin swaps vertical order keeping gap and x
 B1_DISTRACTOR_SHAPES = [s for s in SHAPES if s not in ("triangle", "circle")]
 
 
@@ -271,7 +268,6 @@ def _b3(rng, st):
     return pos, twin, m_true, {(1, "x"), (1, "y")}, {"slot_T": 2, "slot_S": 3}
 
 
-# ---------- B4: two shapes touch; twin separates them by an ink gap >= 2 px at 224 px
 def _contact_t(P1, I, c1, u, t_hi):
     lo, hi = 0.0, t_hi
     for _ in range(50):
@@ -370,7 +366,6 @@ def _b4(rng, st):
     return pos, twin, gap_true, dec, {}
 
 
-# ---------- C1: exactly 3 shapes; twin adds a 4th (equal total ink or equal item size)
 def _scale_all(objs, k):
     return [finalize(dict(o, size=o["size"] * k)) for o in objs]
 
@@ -480,7 +475,6 @@ def _c1_simple(rng, st, control):
 SAMPLERS = {"A1": _a1, "A6": _a6, "B1": _b1, "B3": _b3, "B4": _b4}
 
 
-# ---------- field-by-field twin checker
 def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):
     # returns a list of violations (empty = accepted)
     v = []

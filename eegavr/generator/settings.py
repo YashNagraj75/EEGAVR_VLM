@@ -7,6 +7,7 @@ SMALL = (0.06, 0.10)
 SPLIT_CODE = {"audit": 1, "validation": 2, "test_id": 3, "ood_count": 4, "ood_count_control": 5, "ood_render": 6}
 RULE_TYPE = {"A1": "A", "A6": "A", "B1": "B", "B3": "B", "B4": "B", "C1": "C"}
 PARTNERS = {"B1": "A1", "B3": "A6", "B4": "A1"}
+NO_OOD_COUNT = ("C1",)
 RULE_PROGRAM = {
     "A1": "exists o: o.fill == filled",
     "A6": "exists o: o.shape == triangle and o.fill == filled",
@@ -24,7 +25,7 @@ ID_BINS = {
     "A6": [(0, 0), (1, 1), (2, 2)],
     "B1": [(0.03, 0.06), (0.06, 0.12), (0.12, 0.24)],
     "B3": [(0.03, 0.045), (0.045, 0.06), (0.06, 0.08)],
-    "B4": [(0.010, 0.015)],
+    "B4": [(0.010, 0.015), (0.015, 0.020), (0.020, 0.040)],
     "C1": [(3, 3)],
 }
 FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.06, 0.08), "B4": (0.010, 0.015), "C1": (3, 3)}
@@ -56,9 +57,22 @@ def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
     return st
 
 
-DROPPED = {"A6-s01": "5c: no distractor means 'outline square present' sorts every problem",
-           "B3-s01": "5a pass probe 0.549 [0.541, 0.557] (v0.2.2)",
-           "B3-s02": "5a pass probe 0.542 [0.532, 0.552] (v0.2.2)"}
+DROPPED = {"A6-s01": "5c: no distractor means 'outline square present' sorts every problem"}
+MARGINAL_MAX_5A = 0.555
+MARGINAL_MIN_5D = 0.999
+
+
+def audit_tier(rep):
+    # pass / marginal (user rule 2026-11-16: 5a pass-probe <= 0.555 and 5d >= 99.9%) / excluded, from an audit JSON
+    if rep["setting_id"] in DROPPED:
+        return "excluded"
+    if rep["pass"]:
+        return "pass"
+    d = rep["5d"].get("224", rep["5d"].get(224))["all_ok"]
+    if rep["type"] == "B" and rep["pass_5b"] and rep["5a"]["pass_set"]["best_acc"] <= MARGINAL_MAX_5A \
+            and d >= MARGINAL_MIN_5D:
+        return "marginal"
+    return "excluded"
 
 
 def id_settings(rule):

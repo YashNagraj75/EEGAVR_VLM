@@ -55,16 +55,29 @@ def check_5c(pairs, eq):
     return competing(L, y, eq, names)
 
 
-def problem_setting(rule, split, k):
+def problem_setting(rule, split, k, exclude=()):
     if split in ("validation", "test_id"):
-        bins = active_id_settings(rule)
+        bins = [b for b in active_id_settings(rule) if b["id"] not in exclude]
         return bins[k % len(bins)]
     return ood_settings(rule)[split]
 
 
+def _render_ok(pairs):
+    from .render import render
+    from ..audit.rendering import check_panel
+    for p in pairs:
+        for sc in (p["pos"], p["twin"]):
+            img = render(sc)
+            for size in (224, 256, 448):
+                c = check_panel(img, sc, size)
+                if not (c["no_clip"] and c["components_ok"] and c["gap_ok"] and c["stroke_ok"]):
+                    return False
+    return True
+
+
 def build_problem(rule, split, k, eqmasks, stats, tuning=None, start=0):
     # one problem of a rule: 7 twin pairs of one setting, 5c-checked, resampled until no competing rule
-    st = dict(problem_setting(rule, split, k))
+    st = dict(problem_setting(rule, split, k, (tuning or {}).get("_exclude", ())))
     st.update((tuning or {}).get(rule, {}))
     sid = st["id"]
     ctrl = ("equal_ink" if k % 2 else "equal_size") if rule == "C1" else None
@@ -78,6 +91,10 @@ def build_problem(rule, split, k, eqmasks, stats, tuning=None, start=0):
             pairs.append(p)
         stats["draws"] += sum(p["draws"] for p in pairs)
         stats["pairs"] += len(pairs)
+        if st["id"] in (tuning or {}).get("_render_check", ()) and not _render_ok(pairs):
+            stats["attempts"] += 1
+            stats["render_rejected"] = stats.get("render_rejected", 0) + 1
+            continue
         comp = check_5c(pairs, eqmasks[sid])
         stats["attempts"] += 1
         if comp:
@@ -88,7 +105,7 @@ def build_problem(rule, split, k, eqmasks, stats, tuning=None, start=0):
     raise RuntimeError(f"{rule} {split} {k}: 5c failed {MAX_ATTEMPTS} times")
 
 
-def build_partner(b_rule, pairs, eq, rng, stats):
+def build_partner(b_rule, pairs, eq, rng, stats, exclude=()):
     # A partner from the same 7 base pairs; B state balanced 3/3 on the support pairs, random on the test pair
     a_rule = PARTNERS[b_rule]
     for salt in range(PARTNER_TRIES):
