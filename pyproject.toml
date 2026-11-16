@@ -1,0 +1,13 @@
+[project]
+name = "eegavr"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["numpy", "scipy", "pillow", "matplotlib", "scikit-learn", "shapely", "pandas"]
+[project.optional-dependencies]
+eval = ["torch", "transformers>=4.57", "accelerate", "qwen-vl-utils", "vllm"]
+test = ["pytest"]
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+[tool.setuptools.packages.find]
+include = ["eegavr*"]
