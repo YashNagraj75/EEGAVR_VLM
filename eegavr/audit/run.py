@@ -88,7 +88,8 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
         gc = global_columns()
         uni = {"pixel": run_univariate(P[:, gc], y, g, [ALL_NAMES[k] for k in gc]),
                "symbolic": run_univariate(np.array([r["cues"] for r in rows]), y, g, C_CUES)}
-    p5a = a5["pass_set"]["pass"] if rtype == "B" else (uni["pixel"]["pass"] if rtype == "C" else None)
+    p5a = a5["pass_set"]["pass"] if rtype == "B" else (uni["pixel"]["pass"] and a5["pass_set"]["pass"]
+                                                       if rtype == "C" else None)
     p5d = bool(d5[224]["all_ok"] == 1.0)
     p5b = uni["symbolic"]["pass"] if rtype == "C" else b5["pass"]
     passed = bool(p5b and p5d and (p5a if p5a is not None else True))
@@ -104,9 +105,9 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
            "criterion": {"A": "5a record only; 5b relation-only probe CI90 in band; 5d all panels ok",
                          "B": "5a pass probe = role-free global pixel features, CI90 in [0.45,0.55]; 5b positions "
                               "hidden, CI90 in band; 5d all panels ok",
-                         "C": "univariate probes on each single global pixel feature (5a) and on each numerosity cue "
-                              "(5b: total ink, mean item size, field hull, density) CI90 in band; joint probes "
-                              "reported, not a criterion; 5d all panels ok"}[rtype],
+                         "C": "univariate probes on each single global pixel feature and the role-free global pass "
+                              "probe (5a), and univariate probes on each numerosity cue (5b: total ink, mean item size, "
+                              "field hull, density), all CI90 in band; joint 5b reported only; 5d all panels ok"}[rtype],
            "seconds": time.time() - t0}
     with open(f"{out_dir}/{sid}.json", "w") as f:
         json.dump(rep, f, indent=1)

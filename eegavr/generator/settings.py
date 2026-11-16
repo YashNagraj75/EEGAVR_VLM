@@ -7,7 +7,8 @@ SMALL = (0.06, 0.10)
 SPLIT_CODE = {"audit": 1, "validation": 2, "test_id": 3, "ood_count": 4, "ood_count_control": 5, "ood_render": 6}
 RULE_TYPE = {"A1": "A", "A6": "A", "B1": "B", "B3": "B", "B4": "B", "C1": "C", "C1b": "C"}
 V11_RULES = ("C1b",)
-PARTNERS = {"B1": "A1", "B3": "A6", "B4": "A1", "C1b": "A2"}
+PARTNERS = {"B1": "A1", "B3": "A6", "B4": "A1"}
+PARTNER_FAILED = {"C1b": "A2"}
 NO_OOD_COUNT = ("C1",)
 RULE_PROGRAM = {
     "A1": "exists o: o.fill == filled",
@@ -70,13 +71,19 @@ MARGINAL_MIN_5D = 0.999
 
 def audit_tier(rep):
     # pass / marginal (user rule 2026-11-16: 5a pass-probe <= 0.555 and 5d >= 99.9%) / excluded, from an audit JSON
-    if rep["setting_id"] in DROPPED:
+    if rep["setting_id"] in DROPPED or rep.get("setting", {}).get("partner_of") in PARTNER_FAILED:
         return "excluded"
+    d = rep["5d"].get("224", rep["5d"].get(224))["all_ok"]
+    a = rep["5a"]["pass_set"]
+    if rep["type"] == "C":
+        u = rep["c_univariate"]
+        ok = u["pixel"]["pass"] and u["symbolic"]["pass"] and d == 1.0
+        if ok and a["pass"]:
+            return "pass"
+        return "marginal" if ok and a["best_acc"] <= MARGINAL_MAX_5A else "excluded"
     if rep["pass"]:
         return "pass"
-    d = rep["5d"].get("224", rep["5d"].get(224))["all_ok"]
-    if rep["type"] == "B" and rep["pass_5b"] and rep["5a"]["pass_set"]["best_acc"] <= MARGINAL_MAX_5A \
-            and d >= MARGINAL_MIN_5D:
+    if rep["type"] == "B" and rep["pass_5b"] and a["best_acc"] <= MARGINAL_MAX_5A and d >= MARGINAL_MIN_5D:
         return "marginal"
     return "excluded"
 
