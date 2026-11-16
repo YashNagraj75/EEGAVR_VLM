@@ -12,7 +12,7 @@ class VllmModel(VLM):
     # GPU-host only (unverified in the sandbox): vLLM offline engine, greedy, multi-image.
     tag, spec_key = "qwen3vl-8b", "qwen3vl"
 
-    def __init__(self, path, max_tokens=256, max_model_len=16384, gpu_memory_utilization=0.90,
+    def __init__(self, path, max_tokens=256, max_model_len=32768, gpu_memory_utilization=0.90,
                  max_num_seqs=16, seed=0, **_):
         from transformers import AutoProcessor
         from vllm import LLM, SamplingParams

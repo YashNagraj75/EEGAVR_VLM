@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from eegavr.eval.budget import calibrate, format_table, plan_table, text_tokens
 from eegavr.eval.dataset import EvalSet
+from eegavr.eval.models import MODEL_IDS
 from eegavr.eval.prompts import build_prompt
 from eegavr.eval.runner import Stage, run_stage, write_run_manifest
 from eegavr.eval.scoring import score_dir
@@ -22,7 +23,10 @@ def _model(args):
                                               gpu_memory_utilization=args.gpu_mem, max_num_seqs=args.batch_size)
     if args.model == "mock":
         kw = {"mode": args.mock_mode}
-    return get_model(args.model, backend=args.backend, model_path=args.model_path, **kw)
+    path = args.model_path
+    if path is None and args.model_dir and args.model != "mock":
+        path = str(Path(args.model_dir) / MODEL_IDS[args.model][args.backend].split("/")[-1])
+    return get_model(args.model, backend=args.backend, model_path=path, **kw)
 
 
 def _tokenizer(model):
@@ -91,6 +95,9 @@ def cmd_plan(args):
     calib = calibrate(args.calibrate_from) if args.calibrate_from else None
     rows = plan_table(evalset, plan, hours - plan.get("reserve_hours", 0), args.max_problems, calib)
     print(format_table(rows))
+    for r in rows:
+        if r.get("max_prompt_tokens", 0) + args.max_tokens > args.max_model_len:
+            print(f"WARNING {r['model']} {r['stage']}: max prompt {r['max_prompt_tokens']:.0f} tokens exceeds --max-model-len")
     print("calibration:", json.dumps(calib) if calib else "none (ASSUMED throughput, see eegavr/eval/budget.py)")
     for key in ("qwen3vl", "internvl"):
         print(key, json.dumps(layout_summary(SPECS[key])))
@@ -111,6 +118,8 @@ def cmd_plan(args):
                "--backend", args.backend, "--stages", ",".join(stages), "--deadline-epoch", str(deadline),
                "--batch-size", str(args.batch_size), "--max-tokens", str(args.max_tokens),
                "--max-model-len", str(args.max_model_len), "--gpu-mem", str(args.gpu_mem)]
+        if args.model_dir:
+            cmd += ["--model-dir", args.model_dir]
         if args.max_problems:
             cmd += ["--max-problems", str(args.max_problems)]
         if model_key == "mock":
@@ -154,10 +163,11 @@ def main(argv=None):
     common.add_argument("--model", default="qwen3vl", choices=["qwen3vl", "internvl", "mock"])
     common.add_argument("--backend", default="vllm", choices=["vllm", "hf"])
     common.add_argument("--model-path", default=None, help="local weights dir (default: HF repo id)")
+    common.add_argument("--model-dir", default=None, help="parent dir holding <repo-name>/ weights for every model")
     common.add_argument("--max-problems", type=int, default=None, help="cap per stage (round-robin over rules)")
     common.add_argument("--batch-size", type=int, default=16)
     common.add_argument("--max-tokens", type=int, default=256)
-    common.add_argument("--max-model-len", type=int, default=16384)
+    common.add_argument("--max-model-len", type=int, default=32768)
     common.add_argument("--gpu-mem", type=float, default=0.90)
     common.add_argument("--mock-mode", default="random")
     common.add_argument("--no-retry-errors", action="store_true")

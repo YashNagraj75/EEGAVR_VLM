@@ -15,7 +15,7 @@ class VllmModel(VLM):
     # vLLM engine for InternVL3.5 (original-format repo); unverified without a GPU.
     tag, spec_key = "internvl3.5-8b", "internvl"
 
-    def __init__(self, path, max_tokens=256, max_model_len=16384, gpu_memory_utilization=0.90,
+    def __init__(self, path, max_tokens=256, max_model_len=32768, gpu_memory_utilization=0.90,
                  max_num_seqs=16, seed=0, **_):
         from transformers import AutoTokenizer
         from vllm import LLM, SamplingParams
