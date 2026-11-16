@@ -1,0 +1,158 @@
+{
+ "name": "a6000-9h-pilot",
+ "hours": 9.0,
+ "reserve_hours": 0.75,
+ "note": "Priority order. Described/symbolic are not run on ood_render: the scene text is unchanged by render style. Validation is used only for the smoke test (zero-shot evaluation uses test sets only, protocol Step 7).",
+ "smoke": {
+  "split": "validation",
+  "max_problems": 10,
+  "stages": [
+   "visual:separate",
+   "visual:composite",
+   "described",
+   "symbolic"
+  ]
+ },
+ "stages": [
+  {
+   "priority": 1,
+   "model": "qwen3vl",
+   "stage": "visual:separate:test_id"
+  },
+  {
+   "priority": 2,
+   "model": "qwen3vl",
+   "stage": "described:test_id"
+  },
+  {
+   "priority": 3,
+   "model": "qwen3vl",
+   "stage": "symbolic:test_id"
+  },
+  {
+   "priority": 4,
+   "model": "qwen3vl",
+   "stage": "visual:composite:test_id"
+  },
+  {
+   "priority": 5,
+   "model": "qwen3vl",
+   "stage": "visual:separate:ood_count"
+  },
+  {
+   "priority": 6,
+   "model": "qwen3vl",
+   "stage": "visual:separate:ood_count_control"
+  },
+  {
+   "priority": 7,
+   "model": "qwen3vl",
+   "stage": "visual:separate:ood_render"
+  },
+  {
+   "priority": 8,
+   "model": "qwen3vl",
+   "stage": "described:ood_count"
+  },
+  {
+   "priority": 9,
+   "model": "qwen3vl",
+   "stage": "described:ood_count_control"
+  },
+  {
+   "priority": 10,
+   "model": "qwen3vl",
+   "stage": "symbolic:ood_count"
+  },
+  {
+   "priority": 11,
+   "model": "qwen3vl",
+   "stage": "symbolic:ood_count_control"
+  },
+  {
+   "priority": 12,
+   "model": "qwen3vl",
+   "stage": "visual:composite:ood_count"
+  },
+  {
+   "priority": 13,
+   "model": "qwen3vl",
+   "stage": "visual:composite:ood_count_control"
+  },
+  {
+   "priority": 14,
+   "model": "qwen3vl",
+   "stage": "visual:composite:ood_render"
+  },
+  {
+   "priority": 15,
+   "model": "internvl",
+   "stage": "visual:separate:test_id"
+  },
+  {
+   "priority": 16,
+   "model": "internvl",
+   "stage": "described:test_id"
+  },
+  {
+   "priority": 17,
+   "model": "internvl",
+   "stage": "symbolic:test_id"
+  },
+  {
+   "priority": 18,
+   "model": "internvl",
+   "stage": "visual:composite:test_id"
+  },
+  {
+   "priority": 19,
+   "model": "internvl",
+   "stage": "visual:separate:ood_count"
+  },
+  {
+   "priority": 20,
+   "model": "internvl",
+   "stage": "visual:separate:ood_count_control"
+  },
+  {
+   "priority": 21,
+   "model": "internvl",
+   "stage": "visual:separate:ood_render"
+  },
+  {
+   "priority": 22,
+   "model": "internvl",
+   "stage": "described:ood_count"
+  },
+  {
+   "priority": 23,
+   "model": "internvl",
+   "stage": "described:ood_count_control"
+  },
+  {
+   "priority": 24,
+   "model": "internvl",
+   "stage": "symbolic:ood_count"
+  },
+  {
+   "priority": 25,
+   "model": "internvl",
+   "stage": "symbolic:ood_count_control"
+  },
+  {
+   "priority": 26,
+   "model": "internvl",
+   "stage": "visual:composite:ood_count"
+  },
+  {
+   "priority": 27,
+   "model": "internvl",
+   "stage": "visual:composite:ood_count_control"
+  },
+  {
+   "priority": 28,
+   "model": "internvl",
+   "stage": "visual:composite:ood_render"
+  }
+ ]
+}
