@@ -4,6 +4,9 @@ import json
 import os
 import shutil
 import time
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from eegavr.generator.settings import audit_tier
 
 
 def f3(x):
@@ -28,7 +31,7 @@ def setting_rows(audit_dir):
         rows.append((r["setting_id"], r["type"], f"{r['knob_min']:.3f}–{r['knob_max']:.3f}", f"{r['kept_rate']:.3f}",
                      f"{a['best']} {f3(a['best_acc'])} {ci(a['best_ci90'])}", f"{f3(fu['best_acc'])}",
                      f"{f3(dg['best_acc'])}", f"{b['best']} {f3(b['best_acc'])} {ci(b['best_ci90'])}", uni,
-                     f"{k(224)['all_ok']:.3f}/{k(448)['all_ok']:.3f}", "PASS" if r["pass"] else "FAIL"))
+                     f"{k(224)['all_ok']:.3f}/{k(448)['all_ok']:.3f}", audit_tier(r).upper()))
     return rows
 
 
