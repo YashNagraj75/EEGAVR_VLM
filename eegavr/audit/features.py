@@ -7,7 +7,7 @@ T1_NAMES = ["mean_brightness", "brightness_var", "foreground_frac", "ink_count",
             "dir_vertical", "dir_diagonal", "estimated_count", "occupied_area", "rect_w", "rect_h", "rect_aspect",
             "rect_area", "centre_x", "centre_y", "inter_region_dist", "pixel_spread", "object_spread"]
 POS_NAMES = ["ink_cx", "ink_cy", "ink_median_x", "ink_median_y", "ink_top_y", "ink_bottom_y", "cx_in_bbox",
-             "cy_in_bbox"]
+             "cy_in_bbox", "quad_tl", "quad_tr", "quad_bl", "quad_br"]
 ROLE_NAMES = [f"{r}_{k}" for r in ("t1", "t2") for k in ("ink", "cx_in_own_bbox", "cy_in_own_bbox", "own_h", "own_w")]
 ROLE_ABS_NAMES = [f"{r}_{k}" for r in ("t1", "t2") for k in ("abs_cx", "abs_cy")]
 REGION_NAMES = ["connected_components", "estimated_count", "inter_region_dist", "object_spread"]
@@ -54,22 +54,23 @@ def track1(img512):
 
 
 def ink_position(img512):
-    # darkness-weighted centroid, medians, top/bottom ink height, centroid within the ink bounding box
-    ink = 1.0 - img512.astype(float) / 255.0
+    # at 128 px like Track 1: weighted centroid, medians, top/bottom ink height, centroid in bbox, quadrant ink
+    ink = 1.0 - np.asarray(Image.fromarray(img512).reduce(4), float) / 255.0
     H, W = ink.shape
     ys, xs = np.nonzero(ink > 0.5)
     tot = ink.sum() + 1e-9
     yy, xx = np.mgrid[0:H, 0:W]
     cx, cy = (ink * xx).sum() / tot / W, (ink * yy).sum() / tot / H
     x0, x1, y0, y1 = xs.min() / W, xs.max() / W, ys.min() / H, ys.max() / H
+    h, w = H // 2, W // 2
+    q = [ink[:h, :w].sum() / tot, ink[:h, w:].sum() / tot, ink[h:, :w].sum() / tot, ink[h:, w:].sum() / tot]
     return [cx, cy, np.median(xs) / W, np.median(ys) / H, y0, y1, (cx - x0) / max(x1 - x0, 1e-6),
-            (cy - y0) / max(y1 - y0, 1e-6)]
+            (cy - y0) / max(y1 - y0, 1e-6)] + q
 
 
 def role_features(img512, mask, scene):
-    # per role: ink mass, ink centroid within its own ink bbox, own extent; plus absolute centroid (diagnostic)
-    ink = 1.0 - img512.astype(float) / 255.0
-    H, W = ink.shape
+    # per role, from that role rendered alone: ink mass, centroid within its own ink bbox, extent; plus absolute centroid
+    from ..generator.render import render
     rel, ab = [], []
     for r in ("t1", "t2"):
         o = [o for o in scene["objects"] if o["role"] == r]
@@ -77,16 +78,12 @@ def role_features(img512, mask, scene):
             rel += [0.0] * 5
             ab += [0.0] * 2
             continue
-        reg = ndimage.binary_dilation(mask == o[0]["idx"] + 1, iterations=4)
-        wi = ink * reg
-        ys, xs = np.nonzero(wi > 0.5)
-        if len(xs) == 0:
-            rel += [0.0] * 5
-            ab += [0.0] * 2
-            continue
-        t = wi.sum()
-        yy, xx = np.nonzero(reg)
-        cx, cy = (wi[yy, xx] * xx).sum() / t / W, (wi[yy, xx] * yy).sum() / t / H
+        ink = 1.0 - render({"objects": o[:1], "render_style": scene.get("render_style", "default")}).astype(float) / 255
+        H, W = ink.shape
+        ys, xs = np.nonzero(ink > 0.5)
+        t = ink.sum()
+        yy, xx = np.mgrid[0:H, 0:W]
+        cx, cy = (ink * xx).sum() / t / W, (ink * yy).sum() / t / H
         x0, x1, y0, y1 = xs.min() / W, xs.max() / W, ys.min() / H, ys.max() / H
         rel += [t / (H * W), (cx - x0) / max(x1 - x0, 1e-6), (cy - y0) / max(y1 - y0, 1e-6), y1 - y0, x1 - x0]
         ab += [cx, cy]
@@ -98,8 +95,9 @@ def pixel_features(img512, mask, scene):
 
 
 def pass_columns(rule):
-    # pass-set columns: absolute role centroids always excluded; region counts excluded for B4 and C rules
-    drop = set(ROLE_ABS_NAMES)
-    if rule in ("B4", "C1"):
-        drop |= set(REGION_NAMES)
-    return [i for i, n in enumerate(ALL_NAMES) if n not in drop]
+    # pass probe (lead, 2026-11-16): role-free, relation-agnostic global features only
+    return global_columns()
+
+
+def global_columns():
+    return [i for i, n in enumerate(ALL_NAMES) if n in T1_NAMES + POS_NAMES and n not in REGION_NAMES]

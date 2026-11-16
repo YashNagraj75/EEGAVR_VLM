@@ -47,3 +47,26 @@ def run_probes(X, y, groups, n_splits=5):
     ci = out[best]["ci90"]
     return {"probes": out, "best": best, "best_acc": out[best]["acc"], "best_ci90": ci,
             "pass": bool(BAND[0] <= ci[0] and ci[1] <= BAND[1])}
+
+
+def run_univariate(X, y, groups, names):
+    # one probe per single cue (depth-2 tree and logistic regression); pass = every cue's CI inside the band
+    out = {}
+    for j, n in enumerate(names):
+        pr = {}
+        for name in ("tree_d2", "logreg"):
+            pred = np.zeros(len(y))
+            for tr, te in GroupKFold(n_splits=5).split(X, y, groups):
+                m = make_probes()[name]
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    m.fit(X[tr][:, [j]], y[tr])
+                pred[te] = m.predict(X[te][:, [j]])
+            corr = (pred == y).astype(float)
+            pr[name] = {"acc": float(corr.mean()), "ci90": cluster_ci(corr, groups)}
+        b = max(pr, key=lambda k: pr[k]["acc"])
+        ci = pr[b]["ci90"]
+        out[n] = {"best": b, "acc": pr[b]["acc"], "ci90": ci, "pass": bool(BAND[0] <= ci[0] and ci[1] <= BAND[1])}
+    worst = max(out, key=lambda k: out[k]["acc"])
+    return {"cues": out, "worst_cue": worst, "worst_acc": out[worst]["acc"], "worst_ci90": out[worst]["ci90"],
+            "pass": all(v["pass"] for v in out.values())}

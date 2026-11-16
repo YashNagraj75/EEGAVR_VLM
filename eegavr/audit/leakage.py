@@ -81,3 +81,15 @@ def symbolic_features(sc, rtype):
 
 def names(rtype):
     return {"A": A_NAMES, "B": B_NAMES, "C": C_NAMES}[rtype]
+
+
+C_CUES = ["total_ink", "mean_item_size", "field_hull", "density"]
+
+
+def c_cues(sc):
+    # the four numerosity cues: total ink, mean item size, convex hull of all shapes, number per hull area
+    from shapely.ops import unary_union
+    from ..generator.scene import poly
+    ob = sc["objects"]
+    h = unary_union([poly(o) for o in ob]).convex_hull.area
+    return np.array([sum(ink_area(o) for o in ob), np.mean([o["size"] for o in ob]), h, len(ob) / h], float)

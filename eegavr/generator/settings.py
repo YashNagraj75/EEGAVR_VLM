@@ -24,11 +24,18 @@ ID_BINS = {
     "A6": [(0, 0), (1, 1), (2, 2)],
     "B1": [(0.03, 0.06), (0.06, 0.12), (0.12, 0.24)],
     "B3": [(0.03, 0.045), (0.045, 0.06), (0.06, 0.08)],
-    "B4": [(0.01, 0.02), (0.02, 0.04), (0.04, 0.07)],
+    "B4": [(0.010, 0.015), (0.015, 0.020)],
     "C1": [(3, 3)],
 }
-FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.03, 0.08), "B4": (0.01, 0.07), "C1": (3, 3)}
-TUNING = {}
+FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.03, 0.08), "B4": (0.010, 0.020), "C1": (3, 3)}
+TUNING = {
+    "B1": {"role_fill": "outline", "role_ink_jitter": 0.03, "role_ink_offset": 0.005, "n_objects_id": (4, 4)},
+    "B3": {"twin_within_bbox": True},
+    "B4": {"symmetric_separation": True, "stroke_contact_eps_px": 0.25, "n_objects_id": (4, 4),
+           "distractors_span_roles": True},
+    "C1": {"c1_controls": ["up", "down"], "c1_size_shift": (0.10, 0.30), "c1_size_offset": 0.05,
+           "c1_layout_shift": (0.20, 0.50), "c1_layout_offset": 0.10},
+}
 
 
 def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
@@ -39,7 +46,12 @@ def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
         st["b3_outer_range"] = SIZE_RANGE
     if rule == "A6":
         st["n_objects"] = None
-    st.update(copy.deepcopy(TUNING.get(rule, {})))
+    tune = copy.deepcopy(TUNING.get(rule, {}))
+    if "n_objects_id" in tune:
+        n_id = tune.pop("n_objects_id")
+        if n == ID_N:
+            st["n_objects"] = tuple(n_id)
+    st.update(tune)
     return st
 
 

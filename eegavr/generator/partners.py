@@ -3,11 +3,11 @@ from .rules import _finish, check_twin, _clone
 from .scene import index
 
 
-def partner_pair(partner_rule, b_pair, state):
+def partner_pair(partner_rule, b_pair, state, salt=0):
     # A-partner pair from one B base pair: geometry kept, fills set by the A rule, B state chosen by caller
     base = b_pair["pos"] if state else b_pair["twin"]
     objs = [dict(o, fill=False, role="distractor") for o in base["objects"]]
-    rng = np.random.default_rng([b_pair["seed"], 11, int(state)])
+    rng = np.random.default_rng([b_pair["seed"], 11, int(state), int(salt)])
     if partner_rule == "A1":
         j = int(rng.integers(len(objs)))
         objs[j].update(fill=True, role="t1")
@@ -29,4 +29,4 @@ def partner_pair(partner_rule, b_pair, state):
     if bad:
         raise RuntimeError(f"partner twin rejected: {bad}")
     return {"pos": P, "twin": T, "knob": float(knob), "seed": b_pair["seed"], "b_state": bool(state),
-            "base_setting_id": b_pair["setting_id"], "draws": 1, "meta": {}}
+            "base_setting_id": b_pair["setting_id"], "salt": int(salt), "draws": 1, "meta": {}}
