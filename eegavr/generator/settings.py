@@ -172,7 +172,8 @@ def _partner(a, b):
 
 register_a(globals())
 SETTING_CODE = {sid: i + 1 for i, sid in enumerate(all_settings())}
-SETTING_CODE.update({sid: RC.C_CODE_BASE + k for k, sid in enumerate(s for s in SETTING_CODE if s.split("-")[0] in RC.C_RULES)})
+SETTING_CODE.update({sid: RC.C_CODE_BASE + k
+                     for k, sid in enumerate(s for s in SETTING_CODE if s.split("-")[0] in RC.C_RULES)})
 
 
 def seed_for(split, sid, counter):

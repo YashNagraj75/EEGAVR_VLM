@@ -13,19 +13,25 @@ COUNT_TARGET = {"C2b": ("circle", 4), "C3b": ("square", 5)}
 COUNT_REPLACE = {"C2b": ("square", "triangle", "pentagon", "cross"),
                  "C3b": ("circle", "triangle", "pentagon", "cross")}
 MATCH_TOL = 0.04
-MATCH_CONDS = ((0.08, 3.2, 0.0, 0.0), (0.12, 4.8, 0.003, -0.003), (0.10, 4.0, -0.002, 0.002))
+EXACT_TOL = 0.08
+EXACT_FACTORS = (0.98, 1.0, 1.02)
+EXACT_WEIGHTS = (1.0, 1.0, 1.0, 3.0, 1.0, 4.0, 4.0)
+MATCH_OFFSETS = ((0.0, 0.0), (0.003, -0.002))
+SIZE_GRID = (0.06, 0.08, 0.10, 0.12, 0.14, 0.16)
+STROKE_GRID = (3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5)
 PERIOD = {"circle": 1, "square": 90, "cross": 90, "triangle": 120, "pentagon": 72}
 C4_FILLED = 2
-C4_WEIGHTS = (3.0, 7.5, 8.0, 4.5, 3.0)
+C4_WEIGHTS = (3.0, 7.5, 8.0, 4.5, 0.0)
 C4_FIT_SIZES = (0.03, 0.08, 0.13, 0.18, 0.23)
 C4B_REPLACE = ("pentagon", "square")
 C4B_FILLED = 3
+C4B_WEIGHTS = (3.0, 7.5, 8.0, 4.5, 3.0)
 
 C_RULE_TYPE = {r: "C" for r in C_RULES}
 C_RULE_PROGRAM = {
     "C2b": "count(o: o.shape == circle) == 4  (total count fixed within each twin pair)",
     "C3b": "count(o: o.shape == square) == 5  (total count fixed within each twin pair)",
-    "C4": "count(o: o.fill == filled) == 2  (twin fills one more or un-fills one; sizes rebalance ink and outline length)",
+    "C4": "count(o: o.fill == filled) == 2  (twin fills one more or un-fills one; sizes rebalance ink and outline)",
     "C4b": "count(o: o.shape == circle and o.fill == filled) == 2  (3 filled shapes; twin keeps fill count and ink)",
 }
 C_KNOB_NAME = {"C2b": "circle count pair (4 vs 3) at a fixed total of 5-6 shapes",
@@ -35,7 +41,8 @@ C_KNOB_NAME = {"C2b": "circle count pair (4 vs 3) at a fixed total of 5-6 shapes
 C_ID_BINS = {"C2b": [(4, 4)], "C3b": [(5, 5)], "C4": [(3, 3), (4, 4), (5, 5)], "C4b": [(3, 3), (4, 4), (5, 5)]}
 C_FULL = {"C2b": (4, 4), "C3b": (5, 5), "C4": (3, 5), "C4b": (3, 5)}
 C_TUNING = {"C2b": {"n_objects_id": (5, 6)},
-            "C3b": {"n_objects_id": (6, 6), "size_range_id": (0.06, 0.12), "interior_target": True},
+            "C3b": {"n_objects_id": (6, 6), "size_range_id": (0.06, 0.12), "interior_target": True,
+                    "exact_match": True},
             "C4": {"n_objects_id": None},
             "C4b": {"n_objects_id": None}}
 
@@ -90,12 +97,12 @@ def c4b(scene, k=2):
 C_RULE_FN = {"C2b": c2b, "C3b": c3b, "C4": c4, "C4b": c4b}
 
 
-def _crop_stats(o, crop=0.5):
-    # edge statistics of one object at 128 px (as in audit Track 1): grad weight, horizontal, diagonal, edge px, outline px
+def _crop_stats(o, style="default", crop=0.5):
+    # one object at 128 px as in audit Track 1: grad weight, horizontal, diagonal, edge px, outline px, ink, ink^2
     px = int(crop * 512) * 4
     cv = Image.new("L", (px, px), 0)
     dr = ImageDraw.Draw(cv)
-    g = object_ink(dict(o, x=o["x"] - 0.5 + crop / 2, y=o["y"] - 0.5 + crop / 2))
+    g = object_ink(dict(o, x=o["x"] - 0.5 + crop / 2, y=o["y"] - 0.5 + crop / 2), style)
     for p in (list(g.geoms) if hasattr(g, "geoms") else [g]):
         dr.polygon([(x * 2048, y * 2048) for x, y in p.exterior.coords], fill=255)
         for r in p.interiors:
@@ -108,35 +115,59 @@ def _crop_stats(o, crop=0.5):
     e = mag > 0.1
     a = np.mod(np.arctan2(gy, gx), np.pi)[e]
     w = mag[e]
+    ink = 1.0 - q
     return np.array([w.sum(), (w * np.sin(a) ** 2).sum(), (w * np.abs(np.sin(2 * a))).sum(), e.sum(),
-                     (fg & ~ndimage.binary_erosion(fg)).sum()], float)
+                     (fg & ~ndimage.binary_erosion(fg)).sum(), ink.sum(), (ink ** 2).sum()], float)
+
+
+def _cell(size, stroke):
+    return (int(np.argmin(np.abs(np.array(SIZE_GRID) - size))), int(np.argmin(np.abs(np.array(STROKE_GRID) - stroke))))
 
 
 @lru_cache(maxsize=None)
-def edge_table(shape, fill=False):
-    # size-normalised edge statistics per integer rotation over the shape's symmetry period (averaged over 3 conditions)
-    out = []
-    for r in range(PERIOD[shape]):
-        v = [_crop_stats(make_obj(shape, s, fill, 0.5 + dx, 0.5 + dy, float(r), w)) / s for s, w, dx, dy in MATCH_CONDS]
-        out.append(np.mean(v, 0))
-    return np.array(out)
+def edge_table(shape, fill=False, cell=(2, 2), style="default"):
+    # 128 px statistics per integer rotation over the symmetry period at one (size, stroke) grid cell, 2 offsets
+    s, w = SIZE_GRID[cell[0]], STROKE_GRID[cell[1]]
+    return np.array([np.mean([_crop_stats(make_obj(shape, s, fill, 0.5 + dx, 0.5 + dy, float(r), w), style)
+                              for dx, dy in MATCH_OFFSETS], 0) for r in range(PERIOD[shape])])
 
 
 def _direction_ratios(t):
     return np.c_[t[:, 1] / t[:, 0], t[:, 2] / t[:, 0]]
 
 
-def matched_replacements(target, rotation, shapes, tol=MATCH_TOL, fill=False):
-    # (shape, rotation) candidates matching the target's 128 px edge sums (outline) or direction ratios (filled) within tol
+def matched_replacements(target, rotation, shapes, tol=MATCH_TOL, fill=False, cell=(2, 2), style="default"):
+    # (shape, rotation) candidates matching the target's 128 px statistics (outline) or direction ratios (filled)
     f = _direction_ratios if fill else (lambda t: t)
-    vt = f(edge_table(target, fill))[int(round(rotation)) % PERIOD[target]]
+    vt = f(edge_table(target, fill, cell, style))[int(round(rotation)) % PERIOD[target]]
     out = {}
     for sh in shapes:
-        d = np.abs(f(edge_table(sh, fill)) / vt - 1).max(1)
+        d = np.abs(f(edge_table(sh, fill, cell, style)) / vt - 1).max(1)
         ok = np.nonzero(d <= tol)[0]
         if len(ok):
             out[sh] = ok
     return out
+
+
+def object_stats(o, style="default"):
+    # 128 px statistics of one object rendered at its own pixel phase (shift quantised to 1/128 of the panel)
+    dx, dy = np.floor((o["x"] - 0.5) * 128) / 128, np.floor((o["y"] - 0.5) * 128) / 128
+    return _crop_stats(finalize(dict(o, x=o["x"] - dx, y=o["y"] - dy)), style)
+
+
+def exact_replacement(o, cand, style, factors=EXACT_FACTORS):
+    # the (shape, rotation, size factor) whose rendered statistics are closest to the removed object (weighted squares)
+    v = object_stats(o, style)
+    best = None
+    for sh in sorted(cand):
+        for r in cand[sh]:
+            for k in factors:
+                q = finalize(dict(o, shape=sh, rotation=0.0 if sh == "circle" else float(r), size=o["size"] * k,
+                                  mirror=False))
+                e = float(((np.array(EXACT_WEIGHTS) * (object_stats(q, style) / v - 1)) ** 2).sum())
+                if best is None or e < best[0]:
+                    best = (e, q)
+    return best
 
 
 def _count_by_shape(rng, st):
@@ -149,25 +180,31 @@ def _count_by_shape(rng, st):
     if objs is None:
         return None
     objs = [objs[i] for i in rng.permutation(n)]
-    tol = st.get("match_tol", MATCH_TOL)
-    cand = {i: matched_replacements(target, o["rotation"], COUNT_REPLACE[st["rule"]], tol)
-            for i, o in enumerate(objs) if o["shape"] == target}
-    tg = [i for i, c in cand.items() if c]
+    exact = st.get("exact_match", False)
+    tol = st.get("match_tol", EXACT_TOL if exact else MATCH_TOL)
+    tg = [i for i, o in enumerate(objs) if o["shape"] == target
+          and not (st.get("interior_target") and not _inside_others(objs, i, o))]
+    cand = {i: matched_replacements(target, objs[i]["rotation"], COUNT_REPLACE[st["rule"]], tol,
+                                    cell=_cell(objs[i]["size"], stroke), style=st["style"]) for i in tg}
+    tg = [i for i in tg if cand[i]]
     if not tg:
         return None
     j = tg[int(rng.integers(len(tg)))]
     objs[j] = dict(objs[j], role="t1")
     pos = index(_clone(objs))
     twin = _clone(pos)
-    shs = sorted(cand[j])
-    new = shs[int(rng.integers(len(shs)))]
-    rots = cand[j][new]
-    rot = 0.0 if new == "circle" else float((rots[int(rng.integers(len(rots)))] + rng.uniform(-0.5, 0.5)) % 360)
-    twin[j] = finalize(dict(twin[j], shape=new, mirror=False, rotation=rot))
+    if exact:
+        twin[j] = exact_replacement(pos[j], cand[j], st["style"])[1]
+    else:
+        shs = sorted(cand[j])
+        new = shs[int(rng.integers(len(shs)))]
+        rots = cand[j][new]
+        rot = 0.0 if new == "circle" else float((rots[int(rng.integers(len(rots)))] + rng.uniform(-0.5, 0.5)) % 360)
+        twin[j] = finalize(dict(twin[j], shape=new, mirror=False, rotation=rot))
     if not layout_ok(twin) or (st.get("interior_target") and not _inside_others(twin, j, pos[j])):
         return None
-    dec = {(j, "shape")} | ({(j, "rotation")} if rot != pos[j]["rotation"] else set())
-    return pos, twin, k, dec, {"replacement": new}
+    dec = {(j, f) for f in ("shape", "rotation", "size") if twin[j][f] != pos[j][f]}
+    return pos, twin, k, dec, {"replacement": twin[j]["shape"]}
 
 
 def _inside_others(objs, j, old):
@@ -269,7 +306,7 @@ def _c4(rng, st):
 
 
 def _c4b(rng, st):
-    # 2 filled circles + 1 filled pentagon/square + outline shapes; twin turns a filled circle into an equal-ink edge-matched one
+    # 2 filled circles + 1 filled pentagon/square + outlines; twin: a filled circle becomes an edge-matched shape
     from .scene import size_for_ink, ink_area
     stroke = sample_stroke(rng, st["style"])
     lo, hi = st["n_objects"] if st.get("n_objects") else st["knob"]
@@ -284,7 +321,8 @@ def _c4b(rng, st):
     j = tg[int(rng.integers(len(tg)))]
     objs[j] = dict(objs[j], role="t1")
     pos = index(_clone(objs))
-    cand = matched_replacements("circle", 0.0, C4B_REPLACE, st.get("match_tol", MATCH_TOL), fill=True)
+    cand = matched_replacements("circle", 0.0, C4B_REPLACE, st.get("match_tol", MATCH_TOL), fill=True,
+                                cell=_cell(pos[j]["size"], stroke), style=st["style"])
     shs = sorted(cand)
     new = shs[int(rng.integers(len(shs)))]
     rots = cand[new]
@@ -292,9 +330,13 @@ def _c4b(rng, st):
     size = size_for_ink(new, ink_area(pos[j]), True, stroke)
     twin = _clone(pos)
     twin[j] = finalize(dict(twin[j], shape=new, size=size, rotation=rot, mirror=False))
+    sizes, err = c4_balance(pos, twin, [st["size_range"]] * n, st["style"], st.get("c4_weights", C4B_WEIGHTS))
+    twin = [finalize(dict(o, size=x)) for o, x in zip(twin, sizes)]
     if not layout_ok(twin) or (st.get("interior_target") and not _inside_others(twin, j, pos[j])):
         return None
-    return pos, twin, n, {(j, "shape"), (j, "size"), (j, "rotation")}, {"replacement": new}
+    dec = {(j, "shape"), (j, "rotation")} | {(i, "size") for i, o in enumerate(twin)
+                                              if abs(o["size"] - pos[i]["size"]) >= 1e-9}
+    return pos, twin, n, dec, {"replacement": new, "residual": err}
 
 
 C_SAMPLERS = {"C2b": _count_by_shape, "C3b": _count_by_shape, "C4": _c4, "C4b": _c4b}
@@ -302,7 +344,7 @@ C_INK_CHECKED = ("C2b", "C3b", "C4b")
 
 
 def c_candidates():
-    # 5c candidates for the C rules: per-shape counts for the count-by-shape rules (C4 fill counts are in the pilot list)
+    # 5c candidates for the C rules (C4 fill counts are already in the pilot list)
     C = {}
     for k in range(0, 5):
         C[f"C4b:filled circle count=={k}"] = lambda s, k=k: filled_circles(s) == k

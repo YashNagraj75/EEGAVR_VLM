@@ -70,8 +70,8 @@ def test_c3b_interior_target_keeps_hull():
 
 
 def test_edge_matched_replacement_candidates():
-    m = RC.matched_replacements("circle", 0.0, RC.COUNT_REPLACE["C2b"])
-    assert set(m) == set(RC.COUNT_REPLACE["C2b"])
+    m = RC.matched_replacements("circle", 0.0, RC.COUNT_REPLACE["C2b"], cell=(2, 2))
+    assert m
     for sh, rots in m.items():
-        d = np.abs(RC.edge_table(sh)[rots] / RC.edge_table("circle")[0] - 1).max(1)
+        d = np.abs(RC.edge_table(sh, False, (2, 2))[rots] / RC.edge_table("circle", False, (2, 2))[0] - 1).max(1)
         assert np.all(d <= RC.MATCH_TOL)

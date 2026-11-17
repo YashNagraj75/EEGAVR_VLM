@@ -539,7 +539,8 @@ def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):
         v.append("positive fails rule")
     if RULE_FN[rule](twin):
         v.append("twin still satisfies rule")
-    check_ink = rule in ("A6", "B1", "B3", "B4", "C1b", "A2") + C_INK_CHECKED or (rule == "C1" and control == "equal_ink")
+    check_ink = (rule in ("A6", "B1", "B3", "B4", "C1b", "A2") + C_INK_CHECKED
+                 or (rule == "C1" and control == "equal_ink"))
     if rule == "C1" and control == "inverse_ink":
         check_ink = False
     if check_ink:
