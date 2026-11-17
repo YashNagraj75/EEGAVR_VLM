@@ -1,1 +1,8 @@
 [11:12:50] === setup | window 9 h, 9.0 h left | backend vllm
+[11:14:22] repo at dfe0c43
+[11:14:29] pilot set ready: /home/ubuntu/EEGAVR_VLM/data/eegavr_pilot_v1.1 (manifest md5 d143a273453cff437ccdc31f17f81193)
+16G	/home/ubuntu/models/InternVL3_5-8B
+17G	/home/ubuntu/models/Qwen3-VL-8B-Instruct
+[11:17:23] === setup finished
+[11:17:23] === smoke | window 9 h, 8.92 h left | backend vllm
+[11:17:23] smoke qwen3vl
