@@ -75,7 +75,7 @@ def test_borient_pairs_valid():
             assert st["knob"][0] - 1e-6 <= p["knob"] <= st["knob"][1] + 1e-6
             assert abs(sum(map(ink_area, P)) - sum(map(ink_area, T))) < 1e-4 * sum(map(ink_area, P))
             assert P[0]["shape"] == P[1]["shape"] and P[0]["size"] == P[1]["size"] and P[0]["fill"] == P[1]["fill"]
-            assert P[1]["shape"] not in [o["shape"] for o in P[2:]]
+            assert {P[1]["shape"], R.CONFUSABLE.get(P[1]["shape"])}.isdisjoint(o["shape"] for o in P[2:])
             if st["rule"] == "B6":
                 assert R.rotation_diff_px(T[1], R.angle_diff(T[0], T[1])) >= R.MIN_DIFF_PX
             else:

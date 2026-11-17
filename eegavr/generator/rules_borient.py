@@ -8,6 +8,7 @@ CHIRAL_SHAPES = [s for s in SHAPES if CHIRAL[s]]
 SAME_TOL_DEG = 1.0
 CHECK_PX = 224
 MIN_DIFF_PX = 2.0
+CONFUSABLE = {"pentagon": "irregular_pentagon", "irregular_pentagon": "pentagon"}
 CHIRAL_HAUSDORFF = {"L": 0.20, "right_trapezoid": 0.25, "irregular_pentagon": 0.10}
 
 
@@ -68,9 +69,9 @@ def _n(st):
 
 
 def _distractors(rng, roles, st, role_shape, stroke):
-    # distinct distractor shapes, none equal to the role shape, so no second same-shape pair exists
+    # distinct distractor shapes, never the role shape or its look-alike, so no second same-shape pair exists
     k = _n(st) - len(roles)
-    pool = [s for s in SHAPES if s != role_shape]
+    pool = [s for s in SHAPES if s not in (role_shape, CONFUSABLE.get(role_shape))]
     picks = [pool[i] for i in rng.permutation(len(pool))[:k]]
     if len(picks) < k:
         return None
