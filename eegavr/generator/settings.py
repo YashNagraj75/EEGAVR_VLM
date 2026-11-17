@@ -1,5 +1,6 @@
 import copy
 from .scene import SIZE_RANGE
+from .rules_a import register_settings as register_a
 
 ID_N = (2, 4)
 OOD_N = (7, 8)
@@ -10,6 +11,7 @@ V11_RULES = ("C1b",)
 PARTNERS = {"B1": "A1", "B3": "A6", "B4": "A1"}
 PARTNER_FAILED = {"C1b": "A2"}
 NO_OOD_COUNT = ("C1",)
+EXTRA_ID, EXTRA_OOD, V20_RULES = {}, {}, []
 RULE_PROGRAM = {
     "A1": "exists o: o.fill == filled",
     "A6": "exists o: o.shape == triangle and o.fill == filled",
@@ -89,6 +91,8 @@ def audit_tier(rep):
 
 
 def id_settings(rule):
+    if rule in EXTRA_ID:
+        return [dict(s) for s in EXTRA_ID[rule]]
     return [base(rule, f"{rule}-s{i + 1:02d}", b) for i, b in enumerate(ID_BINS[rule])]
 
 
@@ -97,6 +101,8 @@ def active_id_settings(rule):
 
 
 def ood_settings(rule):
+    if rule in EXTRA_OOD:
+        return {k: dict(v) for k, v in EXTRA_OOD[rule].items()}
     out = {}
     full = FULL[rule]
     if rule == "A1":
@@ -116,7 +122,7 @@ def ood_settings(rule):
 def all_settings():
     # v1 settings first and v1.1 rules last, so setting codes (and seeds) of v1 settings never change
     S = {}
-    for r in [r for r in RULE_TYPE if r not in V11_RULES]:
+    for r in [r for r in RULE_TYPE if r not in V11_RULES and r not in V20_RULES]:
         for st in id_settings(r) + list(ood_settings(r).values()):
             S[st["id"]] = st
     later = {b: a for b, a in PARTNERS.items() if b in V11_RULES}
@@ -128,6 +134,9 @@ def all_settings():
             S[st["id"]] = st
     for b, a in later.items():
         S[f"{a}p{b}-s01"] = _partner(a, b)
+    for r in V20_RULES:
+        for st in id_settings(r) + list(ood_settings(r).values()):
+            S[st["id"]] = st
     return S
 
 
@@ -137,6 +146,7 @@ def _partner(a, b):
             "style": "default"}
 
 
+register_a(globals())
 SETTING_CODE = {sid: i + 1 for i, sid in enumerate(all_settings())}
 
 

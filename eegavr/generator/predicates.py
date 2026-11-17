@@ -83,8 +83,9 @@ def a2(scene):
 
 
 def truth(scene):
-    return {"A1": a1(scene), "A6": a6(scene), "B1": b1(scene), "B3": b3(scene), "B4": b4(scene), "C1": c1(scene),
+    out = {"A1": a1(scene), "A6": a6(scene), "B1": b1(scene), "B3": b3(scene), "B4": b4(scene), "C1": c1(scene),
             "C1b": c1b(scene), "A2": a2(scene)}
+    return out | {k: f(scene) for k, f in RULE_FN.items() if k not in out}
 
 
 RULE_FN = {"A1": a1, "A6": a6, "B1": b1, "B3": b3, "B4": b4, "C1": c1, "C1b": c1b, "A2": a2}
@@ -119,6 +120,7 @@ def candidate_predicates(extended=True):
     for k in range(0, 5):
         C[f"C4:filled count=={k}"] = lambda s, k=k: sum(o["fill"] for o in s["objects"]) == k
         C[f"C4:filled count>={k}"] = lambda s, k=k: sum(o["fill"] for o in s["objects"]) >= k
+    C.update(_cands_a())
     if extended:
         from .scene import SHAPES
         for sh in SHAPES:
@@ -132,3 +134,7 @@ def _b1_rev(scene, gap=0.0):
     ob = scene["objects"]
     return any(t["bbox"][1] - c["bbox"][3] > gap for t in ob if t["shape"] == "triangle"
                for c in ob if c["shape"] == "circle")
+
+
+from .rules_a import PREDICATES as _PRED_A, candidates as _cands_a
+RULE_FN.update(_PRED_A)
