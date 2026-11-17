@@ -23,7 +23,7 @@ PERIOD = {"circle": 1, "square": 90, "cross": 90, "triangle": 120, "pentagon": 7
 C4_FILLED = 2
 C4_WEIGHTS = (3.0, 7.5, 8.0, 4.5, 0.0)
 C4_FIT_SIZES = (0.03, 0.08, 0.13, 0.18, 0.23)
-C4B_REPLACE = ("pentagon", "square")
+C4B_REPLACE = ("pentagon",)
 C4B_FILLED = 3
 C4B_WEIGHTS = (3.0, 7.5, 8.0, 4.5, 3.0)
 FILLED_WEIGHTS = np.array([4.0, 4.0, 2.0, 2.0])
@@ -34,7 +34,8 @@ C_RULE_PROGRAM = {
     "C2b": "count(o: o.shape == circle) == 4  (total count fixed within each twin pair)",
     "C3b": "count(o: o.shape == square) == 5  (total count fixed within each twin pair)",
     "C4": "count(o: o.fill == filled) == 2  (twin fills one more or un-fills one; sizes rebalance ink and outline)",
-    "C4b": "count(o: o.shape == circle and o.fill == filled) == 2  (3 filled shapes; twin keeps fill count and ink)",
+    "C4b": ("count(o: o.shape == circle and o.fill == filled) == 2  "
+            "(3 filled circles or pentagons; twin keeps fill count, ink)"),
 }
 C_KNOB_NAME = {"C2b": "circle count pair (4 vs 3) at a fixed total of 5-6 shapes",
                "C3b": "square count pair (5 vs 4) at a fixed total of 6 shapes",
@@ -326,7 +327,7 @@ def _c4(rng, st):
 
 
 def _c4b(rng, st):
-    # 2 filled circles + 1 filled pentagon/square + outlines; twin: a filled circle becomes an edge-matched shape
+    # 2 filled circles + 1 filled pentagon + outlines; twin: a filled circle becomes an edge-matched filled pentagon
     from .scene import size_for_ink, ink_area
     stroke = sample_stroke(rng, st["style"])
     lo, hi = st["n_objects"] if st.get("n_objects") else st["knob"]
