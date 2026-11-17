@@ -14,6 +14,7 @@ CONVEX = tuple(s for s in SHAPES if s not in CONCAVE)
 CONVEX_SWAP = ("square", "pentagon", "right_trapezoid", "irregular_pentagon")
 TILTABLE = tuple(s for s in SHAPES if s != "circle")
 MATCH_STEP = 1.0
+MIN_DIFF_PX, MIN_INPUT_PX = 2.0, 224
 
 
 def _unit_depth(shape):
@@ -172,6 +173,10 @@ def _declared(pos, twin, j):
     return {(j, f) for f in ("shape", "rotation", "mirror", "size") if pos[j][f] != twin[j][f]}
 
 
+def _visible(pos, twin):
+    return rule_diff({"pos": {"objects": pos}, "twin": {"objects": twin}, "meta": {"target": 0}}, MIN_INPUT_PX) >= MIN_DIFF_PX
+
+
 def _a2(rng, st):
     # one outline triangle; twin: same-size (same-perimeter) outline pentagon rotated to keep the gap structure
     stroke = sample_stroke(rng, st["style"])
@@ -196,7 +201,7 @@ def _a2(rng, st):
         return None
     pos = _index(_clone(objs))
     twin = _index(_swap(pos, 0, "pentagon", False, rot))
-    if not layout_ok(twin):
+    if not layout_ok(twin) or not _visible(pos, twin):
         return None
     return pos, twin, k, _declared(pos, twin, 0), {"target": 0}
 
@@ -217,7 +222,7 @@ def _a3(rng, st):
     pos = _index(_clone(objs))
     twin = _clone(pos)
     twin[0] = finalize(dict(twin[0], size=T - g))
-    if not (_not_closest(twin, 0) and abs(min_gap(twin) - min_gap(pos)) < 1e-12):
+    if not (_not_closest(twin, 0) and abs(min_gap(twin) - min_gap(pos)) < 1e-12 and _visible(pos, twin)):
         return None
     return pos, twin, g, {(0, "size")}, {"target": 0}
 
@@ -248,7 +253,7 @@ def _a4(rng, st):
     twin = _clone(pos)
     twin[0] = finalize(dict(twin[0], rotation=base))
     if not (in_panel(twin[0]) and layout_ok(twin) and _not_closest(twin, 0)
-            and abs(min_gap(twin) - min_gap(pos)) < 1e-12):
+            and abs(min_gap(twin) - min_gap(pos)) < 1e-12 and _visible(pos, twin)):
         return None
     return pos, twin, d, {(0, "rotation")}, {"target": 0, "tilt": t}
 
@@ -276,7 +281,7 @@ def _a5(rng, st):
         return None
     pos = _index(_clone(objs))
     twin = _index(_swap(pos, 0, new, mir, rot))
-    if not layout_ok(twin) or abs(_ink(twin) - _ink(pos)) / _ink(pos) > INK_TOL:
+    if not layout_ok(twin) or abs(_ink(twin) - _ink(pos)) / _ink(pos) > INK_TOL or not _visible(pos, twin):
         return None
     return pos, twin, d, _declared(pos, twin, 0), {"target": 0}
 
@@ -310,7 +315,7 @@ ID_BINS_A = {
     "A5": [(0.022, 0.035), (0.035, 0.050), (0.050, 0.090)],
 }
 FULL_A = {"A2": (1, 3), "A3": (0.010, 0.045), "A4": (0.0, 30.0), "A5": (0.022, 0.090)}
-OOD_KNOB_A = {"A2": (6, 7), "A3": (0.010, 0.045), "A4": (0.0, 30.0), "A5": (0.022, 0.056)}
+OOD_KNOB_A = {"A2": (6, 7), "A3": (0.010, 0.045), "A4": (0.0, 25.0), "A5": (0.022, 0.056)}
 N_ID_A = {"A2": None, "A3": (3, 4), "A4": (3, 4), "A5": ID_N}
 TUNING_A = {"A3": {"a3_threshold": A3_THRESHOLD}}
 
@@ -330,7 +335,8 @@ def ood_settings_a(rule):
     # oc: 7-8 objects, sizes capped at 0.10 (A3: the target excepted); occ: ID count, same cap; or: hatch style
     full, n_id = FULL_A[rule], N_ID_A[rule]
     return {"ood_count": _st(rule, f"{rule}-oc", OOD_KNOB_A[rule], None if rule == "A2" else OOD_N, SMALL),
-            "ood_count_control": _st(rule, f"{rule}-occ", OOD_KNOB_A[rule] if rule == "A5" else full, n_id, SMALL),
+            "ood_count_control": _st(rule, f"{rule}-occ", OOD_KNOB_A[rule] if rule in ("A4", "A5") else full, n_id,
+                                     SMALL),
             "ood_render": _st(rule, f"{rule}-or", full, n_id, SIZE_RANGE, "hatch")}
 
 
