@@ -84,16 +84,15 @@ FAMILY = {"B2": ("B2:", "B2':"), "B5": ("B5:",), "B8": ("B8:", "B8':"), "B9": ("
 
 
 def candidates():
-    # B-layout predicates for the 5c check, at every knob threshold, plus their reversed-role variants
+    # B-layout predicates for the 5c check at the knob bin edges, plus their reversed-role variants
     C = {}
     for t in (0.0, 0.03, 0.05, 0.08, 0.12, 0.16, 0.20):
         C[f"B2:triangle left of circle gap>{t}"] = lambda s, t=t: left_of(s, t)
         C[f"B2':circle left of triangle gap>{t}"] = lambda s, t=t: left_of(s, t, "circle", "triangle")
-    for t in (ON_TOL, 0.01, 0.015, 0.02, 0.03, 0.05, 0.08):
+    for t in (ON_TOL, 0.015, 0.03, 0.05):
         C[f"B5:collinear dev<={t}"] = lambda s, t=t: b5(s, t)
-    for t in (ON_TOL, 0.02):
-        C[f"B8:odd between same dev<={t}"] = lambda s, t=t: _between(s, t, True)
-        C[f"B8':same-shaped between dev<={t}"] = lambda s, t=t: _between(s, t, False)
+    C[f"B8:odd between same dev<={ON_TOL}"] = lambda s: _between(s, ON_TOL, True)
+    C[f"B8':same-shaped between dev<={ON_TOL}"] = lambda s: _between(s, ON_TOL, False)
     for r in (1.0, 1.25, 1.5, 2.0):
         C[f"B9:closest pair same-shaped ratio>={r}"] = lambda s, r=r: b9(s, r)
         C[f"B9':closest pair different shapes ratio>={r}"] = lambda s, r=r: b9(s, r, same=False)
@@ -247,12 +246,14 @@ def _b8(rng, st):
     if not (layout_ok(roles) and layout_ok(twn)):
         return None
     used = {o["shape"], s1["shape"]}
-    ds = _add_free(rng, [roles], _n(rng, st) - 3, [x for x in SHAPES if x not in used], st["size_range"], stroke,
-                   line_thr=OTHER_MIN, unique=True)
+    ds = _add_free(rng, [roles, twn], _n(rng, st) - 3, [x for x in SHAPES if x not in used], st["size_range"],
+                   stroke, line_thr=OTHER_MIN, unique=True)
     if ds is None:
         return None
-    return (index(_clone(roles + ds)), index(_clone(twn + ds)), g,
-            {(0, "x"), (0, "y"), (j, "x"), (j, "y")}, {})
+    pos, twin = index(_clone(roles + ds)), index(_clone(twn + ds))
+    if not (layout_ok(pos) and layout_ok(twin)):
+        return None
+    return pos, twin, g, {(0, "x"), (0, "y"), (j, "x"), (j, "y")}, {}
 
 
 def _closest_by_gap(objs):
@@ -282,11 +283,13 @@ def _b9(rng, st):
     if not (layout_ok(roles) and layout_ok(twn)):
         return None
     used = {o["shape"], s1["shape"]}
-    ds = _add_free(rng, [roles], _n(rng, st) - 3, [x for x in SHAPES if x not in used], st["size_range"], stroke,
-                   min_dist=r * d1 * (1 + 1e-6), unique=True)
+    ds = _add_free(rng, [roles, twn], _n(rng, st) - 3, [x for x in SHAPES if x not in used], st["size_range"],
+                   stroke, min_dist=r * d1 * (1 + 1e-6), unique=True)
     if ds is None:
         return None
     pos, twin = index(_clone(roles + ds)), index(_clone(twn + ds))
+    if not (layout_ok(pos) and layout_ok(twin)):
+        return None
     if _closest_by_gap(pos) != (1, 2) or _closest_by_gap(twin) != tuple(sorted((0, 3 - j))):
         return None
     d = _pairs(pos)

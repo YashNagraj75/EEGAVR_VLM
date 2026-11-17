@@ -74,3 +74,11 @@ def test_pairs_valid_and_deterministic(sid):
         pt = sorted((q["x"], q["y"]) for q in a["twin"]["objects"])
         if st["rule"] in ("B8", "B9"):
             assert np.allclose(pa, pt)
+
+
+@pytest.mark.parametrize("sid", ["B8-s01", "B8-oc", "B9-s01"])
+def test_twin_layout_valid(sid):
+    from eegavr.generator.scene import layout_ok
+    for i in range(20):
+        a = sample_pair(ST[sid], seed_for("audit", sid, i))
+        assert layout_ok(a["pos"]["objects"]) and layout_ok(a["twin"]["objects"])
