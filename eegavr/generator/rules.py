@@ -8,6 +8,7 @@ from . import rules_borient as _borient
 from .predicates import RULE_FN, truth, nest_pairs, touch_pairs, ink_gap
 from .rules_a import SAMPLERS as SAMPLERS_A
 from . import rules_blayout
+from .rules_c import C_SAMPLERS, C_INK_CHECKED
 
 MAX_DRAWS = 20000
 FIELDS = ("shape", "fill", "x", "y", "size", "rotation", "mirror", "stroke_px", "role")
@@ -514,6 +515,7 @@ SAMPLERS = {"A1": _a1, "A6": _a6, "B1": _b1, "B3": _b3, "B4": _b4, "C1b": _c1b}
 SAMPLERS.update(SAMPLERS_A)
 SAMPLERS.update(rules_blayout.SAMPLERS)
 SAMPLERS.update(_borient.SAMPLERS)
+SAMPLERS.update(C_SAMPLERS)
 
 
 def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):
@@ -537,7 +539,7 @@ def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):
         v.append("positive fails rule")
     if RULE_FN[rule](twin):
         v.append("twin still satisfies rule")
-    check_ink = rule in ("A6", "B1", "B3", "B4", "C1b", "A2") or (rule == "C1" and control == "equal_ink")
+    check_ink = rule in ("A6", "B1", "B3", "B4", "C1b", "A2") + C_INK_CHECKED or (rule == "C1" and control == "equal_ink")
     if rule == "C1" and control == "inverse_ink":
         check_ink = False
     if check_ink:

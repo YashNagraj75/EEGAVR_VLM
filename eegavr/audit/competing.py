@@ -3,6 +3,7 @@ from ..generator.predicates import candidate_predicates
 from ..generator.rules_a import FAMILY_A
 from ..generator import rules_blayout
 from ..generator import rules_borient as _borient
+from ..generator.rules_c import C_FAMILY
 
 EQUIV = 0.99
 _CANDS = {}
@@ -33,6 +34,7 @@ FAMILY = {"A1": ("A1:",), "A6": ("A6:",), "B1": ("B1:", "B1':"), "B3": ("B3:",),
 FAMILY.update(FAMILY_A)
 FAMILY.update(rules_blayout.FAMILY)
 FAMILY.update(_borient.FAMILY)
+FAMILY.update(C_FAMILY)
 
 
 def equivalence_mask(L_pool, y_pool, names=None, rule=None):

@@ -3,12 +3,14 @@ from .scene import SIZE_RANGE
 from .rules_a import register_settings as register_a
 from . import rules_blayout
 from . import rules_borient as _borient
+from . import rules_c as RC
 
 ID_N = (2, 4)
 OOD_N = (7, 8)
 SMALL = (0.06, 0.10)
 SPLIT_CODE = {"audit": 1, "validation": 2, "test_id": 3, "ood_count": 4, "ood_count_control": 5, "ood_render": 6}
 RULE_TYPE = {"A1": "A", "A6": "A", "B1": "B", "B3": "B", "B4": "B", "C1": "C", "C1b": "C"}
+RULE_TYPE.update(RC.C_RULE_TYPE)
 V11_RULES = ("C1b",)
 PARTNERS = {"B1": "A1", "B3": "A6", "B4": "A1"}
 PARTNER_FAILED = {"C1b": "A2"}
@@ -24,10 +26,12 @@ RULE_PROGRAM = {
     "C1b": "count(o: o.shape == triangle) == 3  (total count fixed within each twin pair)",
     "A2": "exists o: o.shape == triangle",
 }
+RULE_PROGRAM.update(RC.C_RULE_PROGRAM)
 KNOB_NAME = {"A1": "size of the filled shape", "A6": "number of conjunction distractors",
              "B1": "vertical gap between the extents", "B3": "margin of the inner shape to the outer boundary",
              "B4": "ink gap in the twin", "C1": "count pair (3 vs 4)",
              "C1b": "triangle count pair (3 vs 2) at a fixed total of 5-6 shapes", "A2": "number of non-triangle shapes"}
+KNOB_NAME.update(RC.C_KNOB_NAME)
 
 ID_BINS = {
     "A1": [(0.06, 0.09), (0.09, 0.12), (0.12, 0.16)],
@@ -38,12 +42,14 @@ ID_BINS = {
     "C1": [(3, 3)],
     "C1b": [(3, 3)],
 }
+ID_BINS.update(RC.C_ID_BINS)
 FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.06, 0.08), "B4": (0.010, 0.015), "C1": (3, 3), "C1b": (3, 3)}
 RULE_TYPE.update(_borient.RULE_TYPE)
 RULE_PROGRAM.update(_borient.RULE_PROGRAM)
 KNOB_NAME.update(_borient.KNOB_NAME)
 ID_BINS.update(_borient.ID_BINS)
 FULL.update(_borient.FULL)
+FULL.update(RC.C_FULL)
 TUNING = {
     "C1b": {"n_objects_id": (5, 6)},
     "A6": {"a6_pool": ["FS", "OT", "OS"]},
@@ -60,6 +66,8 @@ for _reg in (rules_blayout,):
         globals()[_name].update(getattr(_reg, _name))
 TUNING.update(_borient.TUNING)
 V20_RULES += tuple(_borient.RULE_TYPE)
+V20_RULES += RC.C_RULES
+TUNING.update(RC.C_TUNING)
 
 
 def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
@@ -74,7 +82,10 @@ def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
     if "n_objects_id" in tune:
         n_id = tune.pop("n_objects_id")
         if n == ID_N:
-            st["n_objects"] = tuple(n_id)
+            st["n_objects"] = tuple(n_id) if n_id else None
+    sr_id = tune.pop("size_range_id", None)
+    if sr_id and tuple(size_range) == SIZE_RANGE:
+        st["size_range"] = tuple(sr_id)
     st.update(tune)
     return st
 
@@ -161,6 +172,7 @@ def _partner(a, b):
 
 register_a(globals())
 SETTING_CODE = {sid: i + 1 for i, sid in enumerate(all_settings())}
+SETTING_CODE.update({sid: RC.C_CODE_BASE + k for k, sid in enumerate(s for s in SETTING_CODE if s.split("-")[0] in RC.C_RULES)})
 
 
 def seed_for(split, sid, counter):

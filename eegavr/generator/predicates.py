@@ -1,6 +1,7 @@
 from .scene import poly, stroke_w, CONCAVE
 from . import rules_blayout
 from . import rules_borient as _borient
+from .rules_c import C_RULE_FN, c_candidates
 
 PILOT_RULES = ("A1", "A6", "B1", "B3", "B4", "C1", "C1b", "A2")
 TOUCH_EPS = 1e-6
@@ -93,6 +94,7 @@ def truth(scene):
 RULE_FN = {"A1": a1, "A6": a6, "B1": b1, "B3": b3, "B4": b4, "C1": c1, "C1b": c1b, "A2": a2}
 RULE_FN.update(rules_blayout.PREDICATES)
 RULE_FN.update(_borient.PREDICATES)
+RULE_FN.update(C_RULE_FN)
 
 
 def candidate_predicates(extended=True):
@@ -126,6 +128,7 @@ def candidate_predicates(extended=True):
         C[f"C4:filled count>={k}"] = lambda s, k=k: sum(o["fill"] for o in s["objects"]) >= k
     C.update(_cands_a())
     C.update(rules_blayout.candidates())
+    C.update(c_candidates())
     if extended:
         from .scene import SHAPES
         for sh in SHAPES:
