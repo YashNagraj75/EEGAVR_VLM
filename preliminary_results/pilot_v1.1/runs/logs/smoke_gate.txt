@@ -1,0 +1,7 @@
+qwen3vl-8b described:none                n=10 panel_acc=0.700 unparsable=0 errors=0
+qwen3vl-8b symbolic:none                 n=10 panel_acc=0.600 unparsable=0 errors=0
+qwen3vl-8b symbolic_complete:none        n=10 panel_acc=0.650 unparsable=0 errors=0
+qwen3vl-8b visual:composite              n=10 panel_acc=0.450 unparsable=0 errors=0
+qwen3vl-8b visual:separate               n=10 panel_acc=0.700 unparsable=0 errors=0
+smoke_qwen3vl.log token-check residuals: [('visual:separate:validation', 22), ('visual:separate:validation', 22), ('visual:separate:validation', 22), ('visual:composite:validation', 9), ('visual:composite:validation', 9), ('visual:composite:validation', 9), ('described:none:validation', 8), ('described:none:validation', 8), ('described:none:validation', 8), ('symbolic:none:validation', 8), ('symbolic:none:validation', 8), ('symbolic:none:validation', 8), ('symbolic_complete:none:validation', 8), ('symbolic_complete:none:validation', 8), ('symbolic_complete:none:validation', 8)]
+GATE PASS

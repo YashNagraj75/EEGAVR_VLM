@@ -1,0 +1,38 @@
+pri model     stage                                          n  img vis_tok tok/prob max_tok     min  cum_h fits
+  1 qwen3vl   visual:separate:test_id                      900   14    3612     3906    3906    13.3   0.34 yes
+  2 qwen3vl   described:none:test_id                       900    0       0     2238    3062     7.6   0.46 yes
+  3 qwen3vl   symbolic:none:test_id                        900    0       0     3081    4610    10.5   0.64 yes
+  4 qwen3vl   symbolic_complete:none:test_id               900    0       0     2631    3494     8.9   0.79 yes
+  5 qwen3vl   visual:composite:test_id                     900    1    4235     4539    4539    15.4   1.04 yes
+  6 qwen3vl   visual:separate:ood_count                    600   14    3612     3906    3906     8.8   1.19 yes
+  7 qwen3vl   visual:separate:ood_count_control            500   14    3612     3906    3906     7.4   1.31 yes
+  8 qwen3vl   visual:separate:ood_render                   500   14    3612     3906    3906     7.4   1.44 yes
+  9 qwen3vl   described:none:ood_count                     600    0       0     4071    4219     9.2   1.59 yes
+ 10 qwen3vl   described:none:ood_count_control             500    0       0     2321    3134     4.4   1.66 yes
+ 11 qwen3vl   symbolic:none:ood_count                      600    0       0     7479    8115    16.9   1.95 yes
+ 12 qwen3vl   symbolic:none:ood_count_control              500    0       0     3340    5056     6.3   2.05 yes
+ 13 qwen3vl   symbolic_complete:none:ood_count             600    0       0     4676    5044    10.6   2.23 yes
+ 14 qwen3vl   symbolic_complete:none:ood_count_control     500    0       0     2782    3620     5.2   2.31 yes
+ 15 qwen3vl   visual:composite:ood_count                   600    1    4235     4539    4539    10.3   2.49 yes
+ 16 qwen3vl   visual:composite:ood_count_control           500    1    4235     4539    4539     8.6   2.63 yes
+ 17 qwen3vl   visual:composite:ood_render                  500    1    4235     4539    4539     8.6   2.77 yes
+ 18 internvl  visual:separate:test_id                      900   14    3612     3906    3906    24.9   3.30 yes
+ 19 internvl  described:none:test_id                       900    0       0     2238    3062    14.9   3.55 yes
+ 20 internvl  symbolic:none:test_id                        900    0       0     3081    4610    20.0   3.89 yes
+ 21 internvl  symbolic_complete:none:test_id               900    0       0     2631    3494    17.3   4.17 yes
+ 22 internvl  visual:composite:test_id                     900    1    3330     3634    3634    23.3   4.56 yes
+ 23 internvl  visual:separate:ood_count                    600   14    3612     3906    3906    16.6   4.84 yes
+ 24 internvl  visual:separate:ood_count_control            500   14    3612     3906    3906    13.9   5.07 yes
+ 25 internvl  visual:separate:ood_render                   500   14    3612     3906    3906    13.9   5.30 yes
+ 26 internvl  described:none:ood_count                     600    0       0     4071    4219    17.3   5.59 yes
+ 27 internvl  described:none:ood_count_control             500    0       0     2321    3134     8.6   5.73 yes
+ 28 internvl  symbolic:none:ood_count                      600    0       0     7479    8115    30.9   6.25 yes
+ 29 internvl  symbolic:none:ood_count_control              500    0       0     3340    5056    12.0   6.45 yes
+ 30 internvl  symbolic_complete:none:ood_count             600    0       0     4676    5044    19.7   6.78 yes
+ 31 internvl  symbolic_complete:none:ood_count_control     500    0       0     2782    3620    10.1   6.94 yes
+ 32 internvl  visual:composite:ood_count                   600    1    3330     3634    3634    15.5   7.20 yes
+ 33 internvl  visual:composite:ood_count_control           500    1    3330     3634    3634    12.9   7.42 yes
+ 34 internvl  visual:composite:ood_render                  500    1    3330     3634    3634    12.9   7.63 yes
+calibration: {"qwen3vl": {"s_per_prompt_token": 0.00022635174717920389, "tokens": 207250}}
+qwen3vl {"separate": {"panel_px": 512, "effective_panel_px": 512.0, "images": 14, "visual_tokens": 3612}, "composite": {"panel_px": 384, "canvas": [2656, 1632], "effective_panel_px": 384.0, "images": 1, "visual_tokens": 4235}}
+internvl {"separate": {"panel_px": 448, "effective_panel_px": 448.0, "images": 14, "visual_tokens": 3612}, "composite": {"panel_px": 256, "canvas": [1792, 1344], "effective_panel_px": 256.0, "images": 1, "visual_tokens": 3330}}
