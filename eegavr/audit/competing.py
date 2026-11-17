@@ -2,6 +2,7 @@ import numpy as np
 from ..generator.predicates import candidate_predicates
 from ..generator.rules_a import FAMILY_A
 from ..generator import rules_blayout
+from ..generator import rules_borient as _borient
 
 EQUIV = 0.99
 _CANDS = {}
@@ -31,6 +32,7 @@ def _pair_counts(L, y):
 FAMILY = {"A1": ("A1:",), "A6": ("A6:",), "B1": ("B1:", "B1':"), "B3": ("B3:",), "B4": ("B4:",), "C1": ("C:count",), "C1b": ("C1b:",), "A2": ("A2:",)}
 FAMILY.update(FAMILY_A)
 FAMILY.update(rules_blayout.FAMILY)
+FAMILY.update(_borient.FAMILY)
 
 
 def equivalence_mask(L_pool, y_pool, names=None, rule=None):

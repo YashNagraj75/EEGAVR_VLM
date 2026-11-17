@@ -4,6 +4,7 @@ from shapely import affinity
 from . import scene as S
 from .scene import (make_obj, moved, finalize, poly, ink_area, ink_geom, layout_ok, in_panel, gap_ok,
                     add_distractors, index, sample_stroke, size_for_ink, SHAPES, MIN_GAP, EDGE_MARGIN, POS_RANGE)
+from . import rules_borient as _borient
 from .predicates import RULE_FN, truth, nest_pairs, touch_pairs, ink_gap
 from .rules_a import SAMPLERS as SAMPLERS_A
 from . import rules_blayout
@@ -512,6 +513,7 @@ def _c1b(rng, st):
 SAMPLERS = {"A1": _a1, "A6": _a6, "B1": _b1, "B3": _b3, "B4": _b4, "C1b": _c1b}
 SAMPLERS.update(SAMPLERS_A)
 SAMPLERS.update(rules_blayout.SAMPLERS)
+SAMPLERS.update(_borient.SAMPLERS)
 
 
 def check_twin(rule, pos, twin, declared, ink_tol=INK_TOL, control=None):

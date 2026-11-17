@@ -2,6 +2,7 @@ import copy
 from .scene import SIZE_RANGE
 from .rules_a import register_settings as register_a
 from . import rules_blayout
+from . import rules_borient as _borient
 
 ID_N = (2, 4)
 OOD_N = (7, 8)
@@ -38,6 +39,11 @@ ID_BINS = {
     "C1b": [(3, 3)],
 }
 FULL = {"A1": None, "A6": (1, 2), "B1": (0.03, 0.24), "B3": (0.06, 0.08), "B4": (0.010, 0.015), "C1": (3, 3), "C1b": (3, 3)}
+RULE_TYPE.update(_borient.RULE_TYPE)
+RULE_PROGRAM.update(_borient.RULE_PROGRAM)
+KNOB_NAME.update(_borient.KNOB_NAME)
+ID_BINS.update(_borient.ID_BINS)
+FULL.update(_borient.FULL)
 TUNING = {
     "C1b": {"n_objects_id": (5, 6)},
     "A6": {"a6_pool": ["FS", "OT", "OS"]},
@@ -52,6 +58,8 @@ for _reg in (rules_blayout,):
     V20_RULES += _reg.RULES
     for _name in ("RULE_TYPE", "RULE_PROGRAM", "KNOB_NAME", "ID_BINS", "FULL", "TUNING"):
         globals()[_name].update(getattr(_reg, _name))
+TUNING.update(_borient.TUNING)
+V20_RULES += tuple(_borient.RULE_TYPE)
 
 
 def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):

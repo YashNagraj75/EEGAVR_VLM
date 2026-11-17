@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
 from scipy import ndimage
+from ..generator import rules_borient as _borient
 
 T1_NAMES = ["mean_brightness", "brightness_var", "foreground_frac", "ink_count", "r_mean", "g_mean", "b_mean",
             "saturation", "edge_density", "outline_length", "connected_components", "dir_horizontal",
@@ -95,8 +96,9 @@ def pixel_features(img512, mask, scene):
 
 
 def pass_columns(rule):
-    # pass probe (lead, 2026-11-16): role-free, relation-agnostic global features only
-    return global_columns()
+    # pass probe (lead, 2026-11-16): role-free global features minus the rule's relation-constitutive ones
+    drop = _borient.PIX_RELATION.get(rule, ())
+    return [i for i in global_columns() if ALL_NAMES[i] not in drop]
 
 
 def global_columns():

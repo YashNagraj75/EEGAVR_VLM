@@ -10,7 +10,7 @@ from ..generator.render import render, render_mask
 from ..generator.version import GENERATOR_VERSION
 from ..generator.scene import ink_area
 from .features import pixel_features, pass_columns, global_columns, ALL_NAMES, ROLE_ABS_NAMES
-from .leakage import symbolic_features, c_cues, C_CUES
+from .leakage import symbolic_features, c_cues, C_CUES, sym_columns
 from .rendering import check_panel
 from .competing import literal_matrix, equivalence_mask
 from .probes import run_probes, run_univariate
@@ -69,7 +69,10 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
           "full_set": run_probes(P[:, full_cols], y, g),
           "global_only": run_probes(P[:, global_columns()], y, g),
           "diagnostic_with_abs_role_centroids": run_probes(P, y, g)}
-    b5 = run_probes(np.array([r["sym"] for r in rows]), y, g)
+    sym = np.array([r["sym"] for r in rows])
+    keep = sym_columns(st["rule"], st["type"])
+    b5 = run_probes(sym[:, keep], y, g)
+    b5_diag = run_probes(sym, y, g) if len(keep) < sym.shape[1] else None
     d5 = {}
     for s in SIZES:
         ch = [r["d5"][s] for r in rows]
@@ -109,6 +112,8 @@ def audit_setting(sid, n_pairs=1000, workers=8, tuning=None, out_dir="runs/audit
                               "probe (5a), and univariate probes on each numerosity cue (5b: total ink, mean item size, "
                               "field hull, density), all CI90 in band; joint 5b reported only; 5d all panels ok"}[rtype],
            "seconds": time.time() - t0}
+    if b5_diag is not None:
+        rep["5b_diagnostic_all_symbolic"] = b5_diag
     with open(f"{out_dir}/{sid}.json", "w") as f:
         json.dump(rep, f, indent=1)
     with open(f"{out_dir}/audit_log.jsonl", "a") as f:

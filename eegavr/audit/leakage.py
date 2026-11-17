@@ -2,6 +2,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 from ..generator.scene import SHAPES, ink_area
 from ..generator.predicates import nest_pairs, touch_pairs
+from ..generator import rules_borient as _borient
 
 B_NAMES = ([f"n_{s}" for s in SHAPES] + ["n_filled", "n_objects", "t1_size", "t2_size", "size_mean", "size_sd",
                                          "size_min", "size_max", "t1_rot_c", "t1_rot_s", "t2_rot_c", "t2_rot_s",
@@ -81,6 +82,12 @@ def symbolic_features(sc, rtype):
 
 def names(rtype):
     return {"A": A_NAMES, "B": B_NAMES, "C": C_NAMES}[rtype]
+
+
+def sym_columns(rule, rtype):
+    # 5b pass columns: relation-constitutive role fields (B6/B7: the reference role's rotation) dropped
+    drop = _borient.SYM_DROP.get(rule, ())
+    return [i for i, n in enumerate(names(rtype)) if n not in drop]
 
 
 C_CUES = ["total_ink", "mean_item_size", "field_hull", "density"]
