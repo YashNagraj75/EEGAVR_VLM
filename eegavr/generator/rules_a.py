@@ -1,6 +1,7 @@
 import numpy as np
 from shapely.geometry import Polygon, Point
 from . import scene as S
+from .render import object_ink
 from .scene import (make_obj, finalize, poly, ink_area, layout_ok, in_panel, gap_ok, sample_stroke, SHAPES, CONCAVE,
                     SYMMETRY, CHIRAL, SIZE_RANGE, POS_RANGE)
 
@@ -73,7 +74,7 @@ def candidates():
     for t in (5.0, 10.0, 15.0, 25.0, 35.0):
         C[f"A4:tilt>={t:g} present"] = lambda s, t=t: a4(s, t)
     C["A4:tilted 45+-5 present"] = a4_near45
-    for d in (0.0, 0.03, 0.045, 0.06):
+    for d in (0.0, 0.03, 0.034, 0.042, 0.05):
         C[f"A5:concave depth>={d} present"] = lambda s, d=d: a5(s, d)
     return C
 
@@ -173,8 +174,13 @@ def _declared(pos, twin, j):
     return {(j, f) for f in ("shape", "rotation", "mirror", "size") if pos[j][f] != twin[j][f]}
 
 
-def _visible(pos, twin):
-    return rule_diff({"pos": {"objects": pos}, "twin": {"objects": twin}, "meta": {"target": 0}}, MIN_INPUT_PX) >= MIN_DIFF_PX
+def _visible(pos, twin, style="default"):
+    # rule-relevant difference >= 2 px and all drawn ink (mitred strokes included) >= 2 px from the edge at 224 px
+    m = MIN_DIFF_PX / MIN_INPUT_PX
+    clear = all(m <= b[0] and m <= b[1] and b[2] <= 1 - m and b[3] <= 1 - m
+                for b in (object_ink(o, style).bounds for o in pos + twin[:1]))
+    pair = {"pos": {"objects": pos}, "twin": {"objects": twin}, "meta": {"target": 0}}
+    return clear and rule_diff(pair, MIN_INPUT_PX) >= MIN_DIFF_PX
 
 
 def _a2(rng, st):
@@ -201,7 +207,7 @@ def _a2(rng, st):
         return None
     pos = _index(_clone(objs))
     twin = _index(_swap(pos, 0, "pentagon", False, rot))
-    if not layout_ok(twin) or not _visible(pos, twin):
+    if not layout_ok(twin) or not _visible(pos, twin, st["style"]):
         return None
     return pos, twin, k, _declared(pos, twin, 0), {"target": 0}
 
@@ -222,7 +228,7 @@ def _a3(rng, st):
     pos = _index(_clone(objs))
     twin = _clone(pos)
     twin[0] = finalize(dict(twin[0], size=T - g))
-    if not (_not_closest(twin, 0) and abs(min_gap(twin) - min_gap(pos)) < 1e-12 and _visible(pos, twin)):
+    if not (_not_closest(twin, 0) and abs(min_gap(twin) - min_gap(pos)) < 1e-12 and _visible(pos, twin, st["style"])):
         return None
     return pos, twin, g, {(0, "size")}, {"target": 0}
 
@@ -253,20 +259,20 @@ def _a4(rng, st):
     twin = _clone(pos)
     twin[0] = finalize(dict(twin[0], rotation=base))
     if not (in_panel(twin[0]) and layout_ok(twin) and _not_closest(twin, 0)
-            and abs(min_gap(twin) - min_gap(pos)) < 1e-12 and _visible(pos, twin)):
+            and abs(min_gap(twin) - min_gap(pos)) < 1e-12 and _visible(pos, twin, st["style"])):
         return None
     return pos, twin, d, {(0, "rotation")}, {"target": 0, "tilt": t}
 
 
 def _a5(rng, st):
-    # one outline cross or L with the knob's concavity depth; twin: same-size convex shape rotated to keep the gaps
+    # one outline cross or L (50/50) with the knob's concavity depth; twin: same-size convex shape rotated to keep the gaps
     stroke = sample_stroke(rng, st["style"])
     sr = st["size_range"]
-    d = _u(rng, st["knob"])
-    feas = [s for s in CONCAVE if sr[0] <= d / UNIT_DEPTH[s] <= sr[1]]
-    if not feas:
+    sh = CONCAVE[int(rng.integers(len(CONCAVE)))]
+    lo, hi = max(st["knob"][0], sr[0] * UNIT_DEPTH[sh]), min(st["knob"][1], sr[1] * UNIT_DEPTH[sh])
+    if lo >= hi:
         return None
-    sh = feas[int(rng.integers(len(feas)))]
+    d = _u(rng, (lo, hi))
     A = make_obj(sh, d / UNIT_DEPTH[sh], False, _u(rng, POS_RANGE), _u(rng, POS_RANGE), rng.uniform(0, 360), stroke,
                  "t1", mirror=bool(rng.random() < 0.5))
     if not in_panel(A):
@@ -281,7 +287,7 @@ def _a5(rng, st):
         return None
     pos = _index(_clone(objs))
     twin = _index(_swap(pos, 0, new, mir, rot))
-    if not layout_ok(twin) or abs(_ink(twin) - _ink(pos)) / _ink(pos) > INK_TOL or not _visible(pos, twin):
+    if not layout_ok(twin) or abs(_ink(twin) - _ink(pos)) / _ink(pos) > INK_TOL or not _visible(pos, twin, st["style"]):
         return None
     return pos, twin, d, _declared(pos, twin, 0), {"target": 0}
 
@@ -312,9 +318,9 @@ ID_BINS_A = {
     "A2": [(1, 1), (2, 2), (3, 3)],
     "A3": [(0.010, 0.020), (0.020, 0.030), (0.030, 0.045)],
     "A4": [(0.0, 10.0), (10.0, 20.0), (20.0, 30.0)],
-    "A5": [(0.022, 0.035), (0.035, 0.050), (0.050, 0.090)],
+    "A5": [(0.034, 0.042), (0.042, 0.050), (0.050, 0.059)],
 }
-FULL_A = {"A2": (1, 3), "A3": (0.010, 0.045), "A4": (0.0, 30.0), "A5": (0.022, 0.090)}
+FULL_A = {"A2": (1, 3), "A3": (0.010, 0.045), "A4": (0.0, 30.0), "A5": (0.034, 0.059)}
 OOD_KNOB_A = {"A2": (6, 7), "A3": (0.010, 0.045), "A4": (0.0, 25.0), "A5": (0.022, 0.056)}
 N_ID_A = {"A2": None, "A3": (3, 4), "A4": (3, 4), "A5": ID_N}
 TUNING_A = {"A3": {"a3_threshold": A3_THRESHOLD}}
