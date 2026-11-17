@@ -1,21 +1,69 @@
-Traceback (most recent call last):
-  File "/home/ubuntu/EEGAVR_VLM/scripts/run_eval.py", line 197, in <module>
-    main()
-  File "/home/ubuntu/EEGAVR_VLM/scripts/run_eval.py", line 192, in main
-    {"run": cmd_run, "smoke": cmd_smoke, "plan": cmd_plan, "score": cmd_score,
-  File "/home/ubuntu/EEGAVR_VLM/scripts/run_eval.py", line 135, in cmd_score
-    records, summary, pairs = score_dir(args.out)
-                              ^^^^^^^^^^^^^^^^^^^
-  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 165, in score_dir
-    for row in summarize(records, keys):
-               ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 84, in summarize
-    "panel_p_above_chance": binom_sf(kp, 2 * n, PANEL_CHANCE),
-                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 32, in binom_sf
-    return min(1.0, sum(math.comb(n, i) * p0 ** i * (1 - p0) ** (n - i) for i in range(k, n + 1)))
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 32, in <genexpr>
-    return min(1.0, sum(math.comb(n, i) * p0 ** i * (1 - p0) ** (n - i) for i in range(k, n + 1)))
-                        ~~~~~~~~~~~~~~~~^~~~~~~~~
-OverflowError: int too large to convert to float
+11000 records; summary.csv and b_vs_partner_a.csv written to runs/pilot
+qwen3vl-8b      described         none      ood_count              n= 600 panel=0.594 [0.566,0.622] both=0.585 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count_control      n= 500 panel=0.625 [0.595,0.654] both=0.612 unparsable=0 errors=0
+qwen3vl-8b      described         none      test_id                n= 900 panel=0.656 [0.634,0.678] both=0.652 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count              n= 600 panel=0.575 [0.547,0.603] both=0.558 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count_control      n= 500 panel=0.609 [0.578,0.639] both=0.596 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      test_id                n= 900 panel=0.622 [0.600,0.644] both=0.612 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count              n= 600 panel=0.579 [0.551,0.607] both=0.433 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count_control      n= 500 panel=0.622 [0.592,0.652] both=0.486 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      test_id                n= 900 panel=0.659 [0.637,0.681] both=0.550 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count              n= 600 panel=0.672 [0.645,0.698] both=0.532 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count_control      n= 500 panel=0.684 [0.655,0.712] both=0.498 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_render             n= 500 panel=0.674 [0.644,0.702] both=0.476 unparsable=0 errors=0
+qwen3vl-8b      visual            composite test_id                n= 900 panel=0.772 [0.752,0.791] both=0.656 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count              n= 600 panel=0.552 [0.524,0.580] both=0.358 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count_control      n= 500 panel=0.573 [0.542,0.603] both=0.368 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_render             n= 500 panel=0.587 [0.556,0.617] both=0.378 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  test_id                n= 900 panel=0.628 [0.606,0.650] both=0.452 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count          A   n= 200 panel=0.775 [0.732,0.813] both=0.775 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count          B   n= 300 panel=0.507 [0.467,0.547] both=0.500 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count          C   n= 100 panel=0.495 [0.426,0.564] both=0.460 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count_control  A   n= 200 panel=0.750 [0.705,0.790] both=0.740 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count_control  B   n= 200 panel=0.550 [0.501,0.598] both=0.540 unparsable=0 errors=0
+qwen3vl-8b      described         none      ood_count_control  C   n= 100 panel=0.525 [0.456,0.593] both=0.500 unparsable=0 errors=0
+qwen3vl-8b      described         none      test_id            A   n= 500 panel=0.763 [0.736,0.788] both=0.762 unparsable=0 errors=0
+qwen3vl-8b      described         none      test_id            B   n= 300 panel=0.518 [0.478,0.558] both=0.513 unparsable=0 errors=0
+qwen3vl-8b      described         none      test_id            C   n= 100 panel=0.535 [0.466,0.603] both=0.520 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count          A   n= 200 panel=0.568 [0.519,0.615] both=0.545 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count          B   n= 300 panel=0.588 [0.549,0.627] both=0.577 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count          C   n= 100 panel=0.550 [0.481,0.617] both=0.530 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count_control  A   n= 200 panel=0.635 [0.587,0.681] both=0.620 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count_control  B   n= 200 panel=0.570 [0.521,0.618] both=0.555 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      ood_count_control  C   n= 100 panel=0.635 [0.566,0.699] both=0.630 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      test_id            A   n= 500 panel=0.610 [0.579,0.640] both=0.596 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      test_id            B   n= 300 panel=0.672 [0.633,0.708] both=0.670 unparsable=0 errors=0
+qwen3vl-8b      symbolic          none      test_id            C   n= 100 panel=0.535 [0.466,0.603] both=0.520 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count          A   n= 200 panel=0.718 [0.671,0.759] both=0.680 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count          B   n= 300 panel=0.517 [0.477,0.556] both=0.307 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count          C   n= 100 panel=0.490 [0.422,0.559] both=0.320 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count_control  A   n= 200 panel=0.780 [0.737,0.818] both=0.745 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count_control  B   n= 200 panel=0.512 [0.464,0.561] both=0.295 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      ood_count_control  C   n= 100 panel=0.525 [0.456,0.593] both=0.350 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      test_id            A   n= 500 panel=0.784 [0.757,0.808] both=0.750 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      test_id            B   n= 300 panel=0.485 [0.445,0.525] both=0.277 unparsable=0 errors=0
+qwen3vl-8b      symbolic_complete none      test_id            C   n= 100 panel=0.560 [0.491,0.627] both=0.370 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count          A   n= 200 panel=0.805 [0.763,0.841] both=0.760 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count          B   n= 300 panel=0.623 [0.584,0.661] both=0.437 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count          C   n= 100 panel=0.555 [0.486,0.622] both=0.360 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count_control  A   n= 200 panel=0.885 [0.850,0.913] both=0.865 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count_control  B   n= 200 panel=0.550 [0.501,0.598] both=0.210 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_count_control  C   n= 100 panel=0.550 [0.481,0.617] both=0.340 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_render         A   n= 200 panel=0.843 [0.804,0.875] both=0.825 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_render         B   n= 200 panel=0.562 [0.514,0.610] both=0.225 unparsable=0 errors=0
+qwen3vl-8b      visual            composite ood_render         C   n= 100 panel=0.560 [0.491,0.627] both=0.280 unparsable=0 errors=0
+qwen3vl-8b      visual            composite test_id            A   n= 500 panel=0.883 [0.862,0.901] both=0.860 unparsable=0 errors=0
+qwen3vl-8b      visual            composite test_id            B   n= 300 panel=0.660 [0.621,0.697] both=0.417 unparsable=0 errors=0
+qwen3vl-8b      visual            composite test_id            C   n= 100 panel=0.555 [0.486,0.622] both=0.350 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count          A   n= 200 panel=0.632 [0.584,0.678] both=0.530 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count          B   n= 300 panel=0.498 [0.458,0.538] both=0.253 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count          C   n= 100 panel=0.555 [0.486,0.622] both=0.330 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count_control  A   n= 200 panel=0.640 [0.592,0.686] both=0.560 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count_control  B   n= 200 panel=0.510 [0.461,0.559] both=0.160 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_count_control  C   n= 100 panel=0.565 [0.496,0.632] both=0.400 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_render         A   n= 200 panel=0.705 [0.659,0.748] both=0.595 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_render         B   n= 200 panel=0.512 [0.464,0.561] both=0.210 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  ood_render         C   n= 100 panel=0.500 [0.431,0.569] both=0.280 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  test_id            A   n= 500 panel=0.698 [0.669,0.726] both=0.606 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  test_id            B   n= 300 panel=0.525 [0.485,0.565] both=0.213 unparsable=0 errors=0
+qwen3vl-8b      visual            separate  test_id            C   n= 100 panel=0.590 [0.521,0.656] both=0.400 unparsable=0 errors=0

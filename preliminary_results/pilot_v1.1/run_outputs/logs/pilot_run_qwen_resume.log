@@ -50,4 +50,172 @@ E0000 00:00:1794926663.087881   50518 config.cc:137] Unknown experiment: event_e
 (EngineCore pid=50627) INFO 11-17 14:45:21 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
 (EngineCore pid=50627) INFO 11-17 14:45:22 [qwen_vl_triton_warmup.py:57] Warmed position embedding and vision rotary kernels on grids=[(1, 16, 16), (1, 16, 2), (1, 2, 16), (1, 2, 2)].
 (EngineCore pid=50627) INFO 11-17 14:45:22 [qwen_vl_triton_warmup.py:102] Warmed M-RoPE Triton kernels.
-Capturing CUDA graphs (PIECEWISE):   0%|          | 
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/7 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):  14%|█▍        | 1/7 [00:00<00:02,  2.97it/s]Capturing CUDA graphs (PIECEWISE):  29%|██▊       | 2/7 [00:00<00:01,  3.30it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 3/7 [00:00<00:01,  3.46it/s]Capturing CUDA graphs (PIECEWISE):  57%|█████▋    | 4/7 [00:01<00:00,  3.70it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████▏  | 5/7 [00:01<00:00,  3.82it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▌ | 6/7 [00:01<00:00,  3.92it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 7/7 [00:01<00:00,  3.96it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 7/7 [00:01<00:00,  3.75it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/5 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):  20%|██        | 1/5 [00:00<00:00,  5.15it/s]Capturing CUDA graphs (FULL):  40%|████      | 2/5 [00:00<00:00,  5.09it/s]Capturing CUDA graphs (FULL):  60%|██████    | 3/5 [00:00<00:00,  5.03it/s]Capturing CUDA graphs (FULL):  80%|████████  | 4/5 [00:00<00:00,  5.04it/s]Capturing CUDA graphs (FULL): 100%|██████████| 5/5 [00:00<00:00,  5.17it/s]Capturing CUDA graphs (FULL): 100%|██████████| 5/5 [00:00<00:00,  5.12it/s]
+(EngineCore pid=50627) INFO 11-17 14:45:27 [model_runner.py:1163] Graph capturing finished in 4 secs, took 0.04 GiB
+(EngineCore pid=50627) INFO 11-17 14:45:27 [gpu_worker.py:1003] CUDA graph pool memory: 0.04 GiB (actual), 0.05 GiB (estimated), difference: 0.0 GiB (8.7%).
+(EngineCore pid=50627) INFO 11-17 14:45:27 [gpu_worker.py:1066] Free memory on device (47.37/47.4 GiB) on startup. Desired GPU memory utilization is (0.9, 42.66 GiB). Actual usage is 16.73 GiB for consumed memory (weights + non-torch), 2.25 GiB for peak activation, and 0.04 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=25219458560` (23.49 GiB) to fit into requested memory, or `--kv-cache-memory=30275560960` (28.2 GiB) to fully utilize gpu memory. Current kv cache memory in use is 23.68 GiB.
+(EngineCore pid=50627) INFO 11-17 14:45:28 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=50627) INFO 11-17 14:45:29 [core.py:405] init engine (profile, create kv cache, warmup model) took 26.86 s (compilation: 0.70 s)
+(EngineCore pid=50627) INFO 11-17 14:45:29 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(MainProcess pid=50518) INFO 11-17 14:45:30 [hf.py:736] Detected the chat template content format to be 'openai'. You can set `--chat-template-content-format` to override this.
+[qwen3vl-8b visual:separate:test_id] 900 selected, 900 done, 0 to run
+[qwen3vl-8b visual:separate:test_id] finished in 0 s
+[qwen3vl-8b described:none:test_id] 900 selected, 900 done, 0 to run
+[qwen3vl-8b described:none:test_id] finished in 0 s
+[qwen3vl-8b symbolic:none:test_id] 900 selected, 900 done, 0 to run
+[qwen3vl-8b symbolic:none:test_id] finished in 0 s
+[qwen3vl-8b symbolic_complete:none:test_id] 900 selected, 900 done, 0 to run
+[qwen3vl-8b symbolic_complete:none:test_id] finished in 0 s
+[qwen3vl-8b visual:composite:test_id] 900 selected, 900 done, 0 to run
+[qwen3vl-8b visual:composite:test_id] finished in 0 s
+[qwen3vl-8b visual:separate:ood_count] 600 selected, 600 done, 0 to run
+[qwen3vl-8b visual:separate:ood_count] finished in 0 s
+[qwen3vl-8b visual:separate:ood_count_control] 500 selected, 500 done, 0 to run
+[qwen3vl-8b visual:separate:ood_count_control] finished in 0 s
+[qwen3vl-8b visual:separate:ood_render] 500 selected, 500 done, 0 to run
+[qwen3vl-8b visual:separate:ood_render] finished in 0 s
+[qwen3vl-8b described:none:ood_count] 600 selected, 600 done, 0 to run
+[qwen3vl-8b described:none:ood_count] finished in 0 s
+[qwen3vl-8b described:none:ood_count_control] 500 selected, 500 done, 0 to run
+[qwen3vl-8b described:none:ood_count_control] finished in 0 s
+[qwen3vl-8b symbolic:none:ood_count] 600 selected, 600 done, 0 to run
+[qwen3vl-8b symbolic:none:ood_count] finished in 0 s
+[qwen3vl-8b symbolic:none:ood_count_control] 500 selected, 500 done, 0 to run
+[qwen3vl-8b symbolic:none:ood_count_control] finished in 0 s
+[qwen3vl-8b symbolic_complete:none:ood_count] 600 selected, 600 done, 0 to run
+[qwen3vl-8b symbolic_complete:none:ood_count] finished in 0 s
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 500 selected, 500 done, 0 to run
+[qwen3vl-8b symbolic_complete:none:ood_count_control] finished in 0 s
+[qwen3vl-8b visual:composite:ood_count] 600 selected, 600 done, 0 to run
+[qwen3vl-8b visual:composite:ood_count] finished in 0 s
+[qwen3vl-8b visual:composite:ood_count_control] 500 selected, 500 done, 0 to run
+[qwen3vl-8b visual:composite:ood_count_control] finished in 0 s
+[qwen3vl-8b visual:composite:ood_render] 500 selected, 112 done, 388 to run
+[qwen3vl-8b visual:composite:ood_render] finished in 552 s
+[
+ {
+  "stage": "visual:separate:test_id",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:test_id",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:test_id",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:test_id",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:test_id",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:separate:ood_count",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:separate:ood_count_control",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:separate:ood_render",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:ood_count",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:ood_count_control",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:ood_count",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:ood_count_control",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count_control",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count_control",
+  "run": 0,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_render",
+  "run": 388,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ }
+]
+(MainProcess pid=50518) INFO 11-17 14:54:42 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=50627) INFO 11-17 14:54:42 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=50627) INFO 11-17 14:54:42 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=50627) INFO 11-17 14:54:42 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=50627) INFO 11-17 14:54:42 [core.py:1573] [shutdown] EngineCore: exiting busy loop
