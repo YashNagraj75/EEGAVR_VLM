@@ -8,3 +8,5 @@
 [11:17:23] smoke qwen3vl
 [11:21:43] === smoke | window 9 h, 8.85 h left | backend vllm
 [11:21:43] smoke qwen3vl
+[11:25:24] === smoke finished
+[11:28:35] === JOB2 qwen-only run, deadline 1794926615.908298 (3.25 h)
