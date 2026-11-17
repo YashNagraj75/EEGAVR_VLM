@@ -1,12 +1,14 @@
 # Evaluation harness (eegavr/eval, scripts/run_eval.py)
 
-Reads any set in the `docs/DATA_CONTRACT.md` format (contract v1) and evaluates open VLMs zero-shot.
+Reads any set in the `docs/DATA_CONTRACT.md` format (contract v1 or 1.1) and evaluates open VLMs zero-shot. The
+symbolic_complete condition also reads `scenes/<panel_id>.json`.
 Run instructions: `docs/GPU_RUNBOOK.md`.
 
 ## Modules
 - `dataset.py`: set reader. `prompt_view()` is the only path from a problem file to a prompt. It keeps `left`, `right`, the test panel ids, `described` and `symbolic`. It drops every scoring-only field (`rule_id`, `type`, `rule_setting_id`, `knob`, `partner_problem_id`, `twin_map`, `positive_side`, `split`, `test[*].answer`). It raises `LeakageError` if `described`/`symbolic` contain `role`, `truth`, `answer`, `panel_id`, ... keys, or any panel/problem id.
 - `vision.py`: per-model image geometry, the composite renderer, and copies of the Qwen `smart_resize` and InternVL tiling rules (vLLM 0.33.0 / transformers 5.23).
-- `prompts.py`: the prompt builder (`PROMPT_VERSION = "neutral-v1"`).
+- `prompts.py`: the prompt builder (`PROMPT_VERSION = "neutral-v2"`; v2 added symbolic_complete, and the other conditions' text is unchanged).
+- `geometry.py`: the symbolic_complete payload, built from the generator's own shape polygons (`eegavr.generator.scene.poly`).
 - `parse.py`: answer parser. `scoring.py`: metrics and CSVs. `runner.py`: resumable stage runner. `budget.py`: token/time estimates.
 - `models/`: `qwen3vl.py`, `internvl.py` (vLLM engine + transformers fallback each), `mock.py`. Model code is isolated there, and adapters read only `Prompt.parts`.
 - `mockset.py`: a tiny contract-v1 fixture set for the tests (not real stimuli).
@@ -21,7 +23,30 @@ Panels are always labelled L1-L6, R1-R6, T1, T2 in file display order. Nothing i
 | visual | separate | 14 images, each preceded by its text label, under "LEFT group", "RIGHT group" and "Test panels" headers |
 | visual | composite | one image: LEFT 2x3 block (top left), RIGHT 2x3 block (top right), a gap, T1 and T2 centred below; every panel labelled and framed |
 | described | - | the problem's `described` text per panel, plus one sentence on the coordinate convention |
-| symbolic | - | the problem's `symbolic` JSON per panel, plus a legend of the object fields and the relation notation |
+| symbolic | - | the problem's `symbolic` JSON per panel, plus a legend of the object fields and the relation notation (relations given: upper bound) |
+| symbolic_complete | - | per panel a JSON `{"line_width", "objects"}` with each object's shape, fill and exact outline (polygon vertices, or circle centre + radius); no relation list (the perfect-parser match) |
+
+## symbolic_complete
+- Per object: `{"shape", "fill": "filled"|"outline", "vertices": [[x, y], ...]}`, or `{"shape": "circle", "fill", "centre": [x, y], "radius": r}`.
+  Coordinates are panel fractions (x from the left, y from the top), 3 decimals (at most 0.26 px at 512 px). The vertices are the
+  exterior of the generator's `poly(o)` (mirror, rotation and centroid placement as rendered). A circle's radius is the
+  circumradius of the 96-gon the renderer draws.
+- `line_width` (one per panel, 4 decimals) is the drawn stroke width. B4 is defined at ink level: a touching pair's outline
+  polygons lie `w - 0.25 px` apart, so touching cannot be decided without it. Twins share the stroke, and on pilot v1.1 the
+  AUC of stroke for positive vs negative side is 0.500 for every rule and split. `complete_scene` raises if strokes differ
+  within a panel, because a per-object width could encode roles.
+- Object order is `eegavr.generator.export._order(panel_id, n)`, the sha1-keyed permutation of the exported `symbolic` list.
+  The panel id is a hash key only and never appears in the prompt. There are no role, idx, id, seed or relation fields.
+  `prompt_view`'s leak guard (forbidden keys, panel/problem ids) is applied to the payload too.
+- Tests (`tests/test_symbolic_complete.py`):
+  - With full-precision values, ink IoU against `render()` at 512 px (ring for outline, filled region for filled) and mask
+    IoU against `render_mask` are > 0.98 for all shapes. The value is 1.000 when the geometry convention is right.
+  - With the prompt's 3-decimal values, the filled-region IoU is > 0.98 and the vertex error is at most 5e-4.
+  - The object order matches the symbolic list.
+  - The prompt and payloads contain no relation words.
+
+  The outline-ring IoU at 3 decimals is only about 0.85-0.90 (the ring is 3-6 px wide and the rounding error is up to
+  0.26 px), so it is not asserted.
 
 ## Image resolutions
 The harness resizes (area averaging, PIL `BOX`) and pads itself, so the model processor's own resize is a no-op. Qwen
