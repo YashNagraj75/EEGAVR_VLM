@@ -1,6 +1,7 @@
 import copy
 from .scene import SIZE_RANGE
 from .rules_a import register_settings as register_a
+from . import rules_blayout
 
 ID_N = (2, 4)
 OOD_N = (7, 8)
@@ -47,6 +48,10 @@ TUNING = {
     "C1": {"c1_controls": ["up", "down"], "c1_size_shift": (0.10, 0.30), "c1_size_offset": 0.05,
            "c1_layout_shift": (0.20, 0.50), "c1_layout_offset": 0.10},
 }
+for _reg in (rules_blayout,):
+    V20_RULES += _reg.RULES
+    for _name in ("RULE_TYPE", "RULE_PROGRAM", "KNOB_NAME", "ID_BINS", "FULL", "TUNING"):
+        globals()[_name].update(getattr(_reg, _name))
 
 
 def base(rule, sid, knob, n=ID_N, size_range=SIZE_RANGE, style="default"):
