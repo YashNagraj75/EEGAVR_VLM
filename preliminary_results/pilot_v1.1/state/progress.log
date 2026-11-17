@@ -6,3 +6,5 @@
 [11:17:23] === setup finished
 [11:17:23] === smoke | window 9 h, 8.92 h left | backend vllm
 [11:17:23] smoke qwen3vl
+[11:21:43] === smoke | window 9 h, 8.85 h left | backend vllm
+[11:21:43] smoke qwen3vl
