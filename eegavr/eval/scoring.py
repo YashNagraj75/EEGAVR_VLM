@@ -26,10 +26,18 @@ def wilson(k, n, z=1.959964):
 
 
 def binom_sf(k, n, p0):
-    # One-sided exact P(X >= k) for X ~ Binomial(n, p0).
+    # One-sided exact P(X >= k) for X ~ Binomial(n, p0), summed in log space so large n cannot overflow.
     if n == 0:
         return float("nan")
-    return min(1.0, sum(math.comb(n, i) * p0 ** i * (1 - p0) ** (n - i) for i in range(k, n + 1)))
+    if k <= 0:
+        return 1.0
+    if k > n:
+        return 0.0
+    lp, lq = math.log(p0), math.log1p(-p0)
+    logs = [math.lgamma(n + 1) - math.lgamma(i + 1) - math.lgamma(n - i + 1) + i * lp + (n - i) * lq
+            for i in range(k, n + 1)]
+    top = max(logs)
+    return min(1.0, math.exp(top) * sum(math.exp(v - top) for v in logs))
 
 
 def score_record(rec):

@@ -152,6 +152,8 @@ def test_wilson_and_binomial():
     assert scoring.wilson(0, 10)[0] == 0.0 and abs(scoring.wilson(0, 10)[1] - 0.2775) < 1e-3
     assert abs(scoring.binom_sf(60, 100, 0.5) - 0.02844) < 1e-4
     assert scoring.binom_sf(0, 10, 0.5) == 1.0
+    assert abs(scoring.binom_sf(1180, 1800, 0.5) / 1.416588235452589e-40 - 1) < 1e-9
+    assert scoring.binom_sf(1801, 1800, 0.5) == 0.0
 
 
 def _oracle(es):
