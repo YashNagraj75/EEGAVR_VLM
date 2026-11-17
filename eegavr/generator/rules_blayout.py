@@ -9,6 +9,7 @@ OTHER_MIN = 0.02
 MIN_RULE_PX = 2.0
 SMALLEST_PX = 224
 B2_DISTRACTOR_SHAPES = [s for s in SHAPES if s not in ("triangle", "circle")]
+CONFUSABLE = {"pentagon": "irregular_pentagon", "irregular_pentagon": "pentagon"}
 
 
 def _u(rng, r):
@@ -125,7 +126,7 @@ def _add_free(rng, panels, n, shapes, size_range, stroke, line_thr=0.0, min_dist
             if ok:
                 added.append(d)
                 if unique:
-                    pool.remove(d["shape"])
+                    pool = [x for x in pool if x not in (d["shape"], CONFUSABLE.get(d["shape"]))]
                 break
         else:
             return None
@@ -205,10 +206,12 @@ def _b5(rng, st):
 
 
 def _sop_roles(rng, st, stroke):
-    # odd shape O (t1) and a same-shaped pair S, S (t2) of equal ink (+- jitter) and one shared fill
+    # odd shape O (t1) and a same-shaped pair S, S (t2), never a confusable pair, equal ink (+- jitter), shared fill
     from .rules import equal_ink_partner
     k = rng.permutation(len(SHAPES))[:2]
     S, O = SHAPES[k[0]], SHAPES[k[1]]
+    if CONFUSABLE.get(S) == O:
+        return None
     fill = bool(rng.random() < 0.5) if st.get("role_fill") != "outline" else False
     sz = equal_ink_partner(rng, S, O, st["size_range"], fill, stroke, st.get("role_ink_jitter", 0.0))
     if sz is None:
@@ -245,7 +248,7 @@ def _b8(rng, st):
     twn = _swap(roles, 0, j)
     if not (layout_ok(roles) and layout_ok(twn)):
         return None
-    used = {o["shape"], s1["shape"]}
+    used = {o["shape"], s1["shape"]} | {CONFUSABLE.get(o["shape"]), CONFUSABLE.get(s1["shape"])}
     ds = _add_free(rng, [roles, twn], _n(rng, st) - 3, [x for x in SHAPES if x not in used], st["size_range"],
                    stroke, line_thr=OTHER_MIN, unique=True)
     if ds is None:
@@ -282,7 +285,7 @@ def _b9(rng, st):
     twn = _swap(roles, 0, j)
     if not (layout_ok(roles) and layout_ok(twn)):
         return None
-    used = {o["shape"], s1["shape"]}
+    used = {o["shape"], s1["shape"]} | {CONFUSABLE.get(o["shape"]), CONFUSABLE.get(s1["shape"])}
     ds = _add_free(rng, [roles, twn], _n(rng, st) - 3, [x for x in SHAPES if x not in used], st["size_range"],
                    stroke, min_dist=r * d1 * (1 + 1e-6), unique=True)
     if ds is None:

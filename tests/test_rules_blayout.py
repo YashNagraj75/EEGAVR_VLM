@@ -82,3 +82,10 @@ def test_twin_layout_valid(sid):
     for i in range(20):
         a = sample_pair(ST[sid], seed_for("audit", sid, i))
         assert layout_ok(a["pos"]["objects"]) and layout_ok(a["twin"]["objects"])
+
+
+@pytest.mark.parametrize("sid", ["B8-oc", "B9-occ"])
+def test_no_confusable_shapes_in_identity_rules(sid):
+    for i in range(20):
+        sh = {q["shape"] for q in sample_pair(ST[sid], seed_for("audit", sid, i))["pos"]["objects"]}
+        assert not {"pentagon", "irregular_pentagon"} <= sh
