@@ -90,13 +90,14 @@ def sym_columns(rule, rtype):
     return [i for i, n in enumerate(names(rtype)) if n not in drop]
 
 
-C_CUES = ["total_ink", "mean_item_size", "field_hull", "density"]
+C_CUES = ["total_ink", "mean_item_size", "field_hull", "density", "ink_concentration"]
 
 
 def c_cues(sc):
-    # the four numerosity cues: total ink, mean item size, convex hull of all shapes, number per hull area
+    # numerosity cues: total ink, mean item size, convex hull of all shapes, number per hull area, ink concentration
     from shapely.ops import unary_union
     from ..generator.scene import poly
     ob = sc["objects"]
     h = unary_union([poly(o) for o in ob]).convex_hull.area
-    return np.array([sum(ink_area(o) for o in ob), np.mean([o["size"] for o in ob]), h, len(ob) / h], float)
+    m = np.array([ink_area(o) for o in ob])
+    return np.array([m.sum(), np.mean([o["size"] for o in ob]), h, len(ob) / h, (m ** 2).sum() / m.sum() ** 2], float)

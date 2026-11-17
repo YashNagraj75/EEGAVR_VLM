@@ -26,6 +26,8 @@ C4_FIT_SIZES = (0.03, 0.08, 0.13, 0.18, 0.23)
 C4B_REPLACE = ("pentagon", "square")
 C4B_FILLED = 3
 C4B_WEIGHTS = (3.0, 7.5, 8.0, 4.5, 3.0)
+FILLED_WEIGHTS = np.array([4.0, 4.0, 2.0, 2.0])
+C4B_MIN_REPLACEMENT = 0.065
 
 C_RULE_TYPE = {r: "C" for r in C_RULES}
 C_RULE_PROGRAM = {
@@ -37,14 +39,14 @@ C_RULE_PROGRAM = {
 C_KNOB_NAME = {"C2b": "circle count pair (4 vs 3) at a fixed total of 5-6 shapes",
                "C3b": "square count pair (5 vs 4) at a fixed total of 6 shapes",
                "C4": "number of shapes in the panel (3-5)",
-               "C4b": "number of shapes in the panel (3-5; 3 of them filled)"}
-C_ID_BINS = {"C2b": [(4, 4)], "C3b": [(5, 5)], "C4": [(3, 3), (4, 4), (5, 5)], "C4b": [(3, 3), (4, 4), (5, 5)]}
-C_FULL = {"C2b": (4, 4), "C3b": (5, 5), "C4": (3, 5), "C4b": (3, 5)}
+               "C4b": "number of shapes in the panel (4-6; 3 of them filled)"}
+C_ID_BINS = {"C2b": [(4, 4)], "C3b": [(5, 5)], "C4": [(3, 3), (4, 4), (5, 5)], "C4b": [(4, 4), (5, 5), (6, 6)]}
+C_FULL = {"C2b": (4, 4), "C3b": (5, 5), "C4": (3, 5), "C4b": (4, 6)}
 C_TUNING = {"C2b": {"n_objects_id": (5, 6)},
             "C3b": {"n_objects_id": (6, 6), "size_range_id": (0.06, 0.12), "interior_target": True,
                     "exact_match": True},
             "C4": {"n_objects_id": None},
-            "C4b": {"n_objects_id": None}}
+            "C4b": {"n_objects_id": None, "exact_match": True}}
 
 
 def _u(rng, r):
@@ -165,6 +167,24 @@ def exact_replacement(o, cand, style, factors=EXACT_FACTORS):
                 q = finalize(dict(o, shape=sh, rotation=0.0 if sh == "circle" else float(r), size=o["size"] * k,
                                   mirror=False))
                 e = float(((np.array(EXACT_WEIGHTS) * (object_stats(q, style) / v - 1)) ** 2).sum())
+                if best is None or e < best[0]:
+                    best = (e, q)
+    return best
+
+
+def _filled_key(u):
+    return np.array([u[1] / u[0], u[2] / u[0], u[5], u[6]])
+
+
+def exact_filled_replacement(o, cand, size, style, factors=EXACT_FACTORS):
+    # filled replacement (shape, rotation, size factor) closest to the circle in 128 px direction ratios and ink sums
+    tv = _filled_key(object_stats(o, style))
+    best = None
+    for sh in sorted(cand):
+        for r in cand[sh]:
+            for k in factors:
+                q = finalize(dict(o, shape=sh, rotation=float(r), size=size * k, mirror=False))
+                e = float(((FILLED_WEIGHTS * (_filled_key(object_stats(q, style)) / tv - 1)) ** 2).sum())
                 if best is None or e < best[0]:
                     best = (e, q)
     return best
@@ -321,16 +341,27 @@ def _c4b(rng, st):
     j = tg[int(rng.integers(len(tg)))]
     objs[j] = dict(objs[j], role="t1")
     pos = index(_clone(objs))
-    cand = matched_replacements("circle", 0.0, C4B_REPLACE, st.get("match_tol", MATCH_TOL), fill=True,
-                                cell=_cell(pos[j]["size"], stroke), style=st["style"])
-    shs = sorted(cand)
-    new = shs[int(rng.integers(len(shs)))]
-    rots = cand[new]
-    rot = float((rots[int(rng.integers(len(rots)))] + rng.uniform(-0.5, 0.5)) % 360)
-    size = size_for_ink(new, ink_area(pos[j]), True, stroke)
+    exact = st.get("exact_match", False)
+    cand = matched_replacements("circle", 0.0, C4B_REPLACE, st.get("match_tol", EXACT_TOL if exact else MATCH_TOL),
+                                fill=True, cell=_cell(pos[j]["size"], stroke), style=st["style"])
     twin = _clone(pos)
-    twin[j] = finalize(dict(twin[j], shape=new, size=size, rotation=rot, mirror=False))
-    sizes, err = c4_balance(pos, twin, [st["size_range"]] * n, st["style"], st.get("c4_weights", C4B_WEIGHTS))
+    if exact:
+        sz = {sh: size_for_ink(sh, ink_area(pos[j]), True, stroke) for sh in cand}
+        twin[j] = min((exact_filled_replacement(pos[j], {sh: cand[sh]}, sz[sh], st["style"]) for sh in sorted(cand)),
+                      key=lambda b: b[0])[1]
+    else:
+        shs = sorted(cand)
+        new = shs[int(rng.integers(len(shs)))]
+        rots = cand[new]
+        rot = float((rots[int(rng.integers(len(rots)))] + rng.uniform(-0.5, 0.5)) % 360)
+        size = size_for_ink(new, ink_area(pos[j]), True, stroke)
+        twin[j] = finalize(dict(twin[j], shape=new, size=size, rotation=rot, mirror=False))
+    new = twin[j]["shape"]
+    w = tuple(st.get("c4_weights", C4B_WEIGHTS))
+    w = w + (w[0],) if st["style"] != "default" else w
+    bnd = [(max(st["size_range"][0], C4B_MIN_REPLACEMENT), st["size_range"][1]) if i == j else st["size_range"]
+           for i in range(n)]
+    sizes, err = c4_balance(pos, twin, bnd, st["style"], w)
     twin = [finalize(dict(o, size=x)) for o, x in zip(twin, sizes)]
     if not layout_ok(twin) or (st.get("interior_target") and not _inside_others(twin, j, pos[j])):
         return None

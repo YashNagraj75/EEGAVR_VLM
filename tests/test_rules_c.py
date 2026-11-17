@@ -69,6 +69,21 @@ def test_c3b_interior_target_keeps_hull():
         assert abs(h[0] - h[1]) < 1e-9
 
 
+@pytest.mark.parametrize("sid", ["C4b-s01", "C4b-oc"])
+def test_c4b_twin_keeps_fill_count_and_is_visible(sid):
+    from shapely.geometry import Point
+    from eegavr.generator.scene import ink_geom
+    assert ST["C4b-s01"]["knob"] == (4, 4) and ST["C4b-s03"]["knob"] == (6, 6)
+    for i in range(2):
+        p = sample_pair(ST[sid], seed_for("audit", sid, i))
+        P, T = p["pos"]["objects"], p["twin"]["objects"]
+        assert sum(o["fill"] for o in P) == sum(o["fill"] for o in T) == RC.C4B_FILLED
+        j = [k for k in range(len(P)) if P[k]["shape"] != T[k]["shape"]][0]
+        g = ink_geom(T[j])
+        c = Point(g.centroid.x, g.centroid.y).buffer(np.sqrt(g.area / np.pi), 256)
+        assert g.hausdorff_distance(c) * 224 >= 2.0
+
+
 def test_edge_matched_replacement_candidates():
     m = RC.matched_replacements("circle", 0.0, RC.COUNT_REPLACE["C2b"], cell=(2, 2))
     assert m
