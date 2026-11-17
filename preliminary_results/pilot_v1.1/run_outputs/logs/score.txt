@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/home/ubuntu/EEGAVR_VLM/scripts/run_eval.py", line 197, in <module>
+    main()
+  File "/home/ubuntu/EEGAVR_VLM/scripts/run_eval.py", line 192, in main
+    {"run": cmd_run, "smoke": cmd_smoke, "plan": cmd_plan, "score": cmd_score,
+  File "/home/ubuntu/EEGAVR_VLM/scripts/run_eval.py", line 135, in cmd_score
+    records, summary, pairs = score_dir(args.out)
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 165, in score_dir
+    for row in summarize(records, keys):
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 84, in summarize
+    "panel_p_above_chance": binom_sf(kp, 2 * n, PANEL_CHANCE),
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 32, in binom_sf
+    return min(1.0, sum(math.comb(n, i) * p0 ** i * (1 - p0) ** (n - i) for i in range(k, n + 1)))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/EEGAVR_VLM/eegavr/eval/scoring.py", line 32, in <genexpr>
+    return min(1.0, sum(math.comb(n, i) * p0 ** i * (1 - p0) ** (n - i) for i in range(k, n + 1)))
+                        ~~~~~~~~~~~~~~~~^~~~~~~~~
+OverflowError: int too large to convert to float

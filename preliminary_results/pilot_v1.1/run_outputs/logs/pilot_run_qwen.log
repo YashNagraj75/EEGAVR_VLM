@@ -725,3 +725,172 @@ E0000 00:00:1794914927.547819    5203 config.cc:137] Unknown experiment: event_e
 [qwen3vl-8b visual:composite:ood_count] 592/600  1.39 s/problem  errors=0
 [qwen3vl-8b visual:composite:ood_count] 600/600  1.46 s/problem  errors=0
 [qwen3vl-8b visual:composite:ood_count] finished in 859 s
+[qwen3vl-8b visual:composite:ood_count_control] 500 selected, 0 done, 500 to run
+[qwen3vl-8b visual:composite:ood_count_control] 16/500  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 32/500  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 48/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 64/500  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 80/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 96/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 112/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 128/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 144/500  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 160/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 176/500  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 192/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 208/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 224/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 240/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 256/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 272/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 288/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 304/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 320/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 336/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 352/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 368/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 384/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 400/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 416/500  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 432/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 448/500  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 464/500  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 480/500  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 496/500  1.43 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 500/500  1.67 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] finished in 712 s
+[qwen3vl-8b visual:composite:ood_render] 500 selected, 0 done, 500 to run
+[qwen3vl-8b visual:composite:ood_render] 16/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 32/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 48/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 64/500  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 80/500  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 96/500  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 112/500  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] deadline reached; stopping with 388 left
+[
+ {
+  "stage": "visual:separate:test_id",
+  "run": 900,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:test_id",
+  "run": 900,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:test_id",
+  "run": 900,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:test_id",
+  "run": 900,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:test_id",
+  "run": 900,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:separate:ood_count",
+  "run": 600,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:separate:ood_count_control",
+  "run": 500,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:separate:ood_render",
+  "run": 500,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:ood_count",
+  "run": 600,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:ood_count_control",
+  "run": 500,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:ood_count",
+  "run": 600,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:ood_count_control",
+  "run": 500,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count",
+  "run": 600,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count_control",
+  "run": 500,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count",
+  "run": 600,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count_control",
+  "run": 500,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_render",
+  "run": 112,
+  "errors": 0,
+  "left": 388,
+  "stopped": "deadline"
+ }
+]
+(MainProcess pid=5203) INFO 11-17 14:43:34 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=5988) INFO 11-17 14:43:34 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=5988) INFO 11-17 14:43:34 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=5988) INFO 11-17 14:43:34 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=5988) INFO 11-17 14:43:34 [core.py:1573] [shutdown] EngineCore: exiting busy loop
