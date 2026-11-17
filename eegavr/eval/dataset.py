@@ -131,6 +131,9 @@ class EvalSet:
     def panel_path(self, panel_id):
         return self.root / "panels" / f"{panel_id}.png"
 
+    def load_scene(self, panel_id):
+        return json.loads((self.root / "scenes" / f"{panel_id}.json").read_text())
+
     def load_panel(self, panel_id):
         with Image.open(self.panel_path(panel_id)) as im:
             im.load()

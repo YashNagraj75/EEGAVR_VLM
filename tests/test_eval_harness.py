@@ -20,7 +20,7 @@ from eegavr.eval.vision import (SPECS, composite_geometry, internvl_grid, layout
                                 qwen_smart_resize)
 
 REPO = Path(__file__).resolve().parents[1]
-STAGES = ["visual:separate", "visual:composite", "described", "symbolic"]
+STAGES = ["visual:separate", "visual:composite", "described", "symbolic", "symbolic_complete"]
 
 
 def _all_ids(es):
@@ -63,7 +63,7 @@ def test_prompt_structure_and_no_leaks(mockset, spec_key, stage):
     st = Stage.parse(f"{stage}:test_id")
     for pid in es.split_ids("test_id"):
         prob = es.load_problem(pid)
-        pr = build_prompt(prob, st.condition, st.layout, spec, es.load_panel)
+        pr = build_prompt(prob, st.condition, st.layout, spec, es.load_panel, es.load_scene)
         text = pr.text_with_placeholders("<image>")
         labels = [f"L{i}" for i in range(1, 7)] + [f"R{i}" for i in range(1, 7)] + ["T1", "T2"]
         pos = [text.find(f"{lab}:") if st.layout != "composite" else text.find(lab) for lab in labels]
@@ -170,8 +170,8 @@ def test_oracle_and_constant_models(mockset, tmp_path):
         for s in STAGES:
             run_stage(model, es, Stage.parse(f"{s}:test_id"), out, batch_size=5, log=lambda *_: None)
     rows, pairs = _rows(tmp_path / "o")
-    assert len(rows) == 4 and all(r["panel_acc"] == 1.0 and r["both_acc"] == 1.0 for r in rows)
-    assert len(pairs) == 4 and all(p["n_pairs"] == 4 and p["panel_diff_B_minus_A"] == 0 for p in pairs)
+    assert len(rows) == len(STAGES) and all(r["panel_acc"] == 1.0 and r["both_acc"] == 1.0 for r in rows)
+    assert len(pairs) == len(STAGES) and all(p["n_pairs"] == 4 and p["panel_diff_B_minus_A"] == 0 for p in pairs)
     rows, _ = _rows(tmp_path / "l")
     assert all(r["panel_acc"] == 0.5 and r["both_acc"] == 0.0 and r["frac_left"] == 1.0 and r["frac_same_side"] == 1.0
                for r in rows)

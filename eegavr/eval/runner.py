@@ -98,7 +98,8 @@ def run_stage(model, evalset, stage, out_dir, batch_size=16, max_problems=None, 
             return {"stage": str(stage), "run": n_run, "errors": n_err, "left": len(todo) - b0, "stopped": "deadline"}
         batch = todo[b0:b0 + batch_size]
         problems = [evalset.load_problem(pid) for pid in batch]
-        prompts = [build_prompt(p, stage.condition, stage.layout, spec, evalset.load_panel) for p in problems]
+        prompts = [build_prompt(p, stage.condition, stage.layout, spec, evalset.load_panel, evalset.load_scene)
+                   for p in problems]
         t0 = time.time()
         gens = model.generate(prompts)
         dt = time.time() - t0

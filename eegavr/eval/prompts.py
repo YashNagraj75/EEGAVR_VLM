@@ -1,11 +1,12 @@
 import json
 from dataclasses import dataclass, field
 
-from .dataset import prompt_view
+from .dataset import _check_payload, prompt_view
+from .geometry import complete_scene
 from .vision import prepare_separate, render_composite
 
-PROMPT_VERSION = "neutral-v1"
-CONDITIONS = ("visual", "described", "symbolic")
+PROMPT_VERSION = "neutral-v2"
+CONDITIONS = ("visual", "described", "symbolic", "symbolic_complete")
 LAYOUTS = ("separate", "composite")
 LEFT_LABELS = tuple(f"L{i}" for i in range(1, 7))
 RIGHT_LABELS = tuple(f"R{i}" for i in range(1, 7))
@@ -39,6 +40,14 @@ PRESENT = {
         "means object 1 is above object 2); [\"between\", m, a, b] means object m lies between "
         "objects a and b. Only relations that hold are listed."
     ),
+    ("symbolic_complete", None): (
+        "Each panel is given as a JSON scene description with a line width and a list of objects. All coordinates "
+        "and lengths are fractions of the panel width: x is measured from the left edge and y from the top edge, so a "
+        "smaller y means higher up. For each object: shape, fill (filled or outline) and its outline. A polygon "
+        "outline is given as \"vertices\", the list of its corner points [x, y] in order along the outline; a circle "
+        "is given by its \"centre\" [x, y] and \"radius\". Every outline is drawn as a line of width line_width "
+        "centred on the outline, and a filled shape is drawn as a solid region."
+    ),
 }
 ANSWER = (
     "Answer with only a JSON object and no other text, in exactly this format:\n"
@@ -68,20 +77,33 @@ def label_map(view):
     return m
 
 
-def _panel_text(condition, view, pid):
+def _panel_text(condition, view, pid, complete=None):
     if condition == "described":
         return str(view.described[pid]).strip()
-    return json.dumps(view.symbolic[pid], separators=(", ", ": "), ensure_ascii=True)
+    payload = complete[pid] if condition == "symbolic_complete" else view.symbolic[pid]
+    return json.dumps(payload, separators=(", ", ": "), ensure_ascii=True)
 
 
-def build_prompt(problem, condition, layout, spec, load_panel):
-    # load_panel(panel_id) -> PIL image; called only for visual prompts, in display order.
+def complete_payloads(problem, ids, load_scene):
+    # Geometry-only scene per panel from the scene files; checked with the same leak guard as symbolic.
+    payload = {pid: complete_scene(load_scene(pid)) for pid in ids}
+    _check_payload({"problem_id": problem["problem_id"], "symbolic_complete": payload}, "symbolic_complete", ids)
+    return payload
+
+
+def build_prompt(problem, condition, layout, spec, load_panel, load_scene=None):
+    # load_panel(panel_id) -> PIL image for visual prompts; load_scene(panel_id) -> scene dict for symbolic_complete.
     if condition not in CONDITIONS:
         raise ValueError(f"unknown condition {condition!r}")
     if condition == "visual" and layout not in LAYOUTS:
         raise ValueError(f"unknown layout {layout!r}")
     view = prompt_view(problem, need_described=condition == "described", need_symbolic=condition == "symbolic")
     labels = label_map(view)
+    complete = None
+    if condition == "symbolic_complete":
+        if load_scene is None:
+            raise ValueError("symbolic_complete needs load_scene")
+        complete = complete_payloads(problem, list(labels.values()), load_scene)
     parts = [("text", INTRO + "\n\n")]
     groups = (("LEFT group:", LEFT_LABELS), ("RIGHT group:", RIGHT_LABELS), ("Test panels:", TEST_LABELS))
     if condition == "visual" and layout == "separate":
@@ -101,7 +123,7 @@ def build_prompt(problem, condition, layout, spec, load_panel):
         for header, labs in groups:
             parts.append(("text", f"\n{header}\n"))
             for lab in labs:
-                parts.append(("text", f"{lab}: {_panel_text(condition, view, labels[lab])}\n"))
+                parts.append(("text", f"{lab}: {_panel_text(condition, view, labels[lab], complete)}\n"))
     parts.append(("text", "\n" + ANSWER))
     merged = []
     for kind, val in parts:

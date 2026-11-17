@@ -6,6 +6,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw
 
+from ..generator.scene import UNIT_R
+
 SHAPES = {"circle": (0, False), "square": (4, False), "triangle": (3, False)}
 
 
@@ -35,7 +37,8 @@ def render(objects, size=512):
 
 def _obj(idx, shape, x, y, r, fill, rng, role="distractor"):
     sym, chiral = SHAPES[shape]
-    return {"idx": idx, "shape": shape, "chiral": chiral, "symmetry_order": sym, "radius": r, "fill": fill,
+    return {"idx": idx, "shape": shape, "chiral": chiral, "symmetry_order": sym, "radius": r,
+            "size": round(r / UNIT_R[shape], 6), "mirror": False, "fill": fill,
             "x": round(x, 3), "y": round(y, 3), "rotation": float(rng.randrange(0, 360, 5)) if shape != "circle" else 0.0,
             "stroke_px": round(rng.uniform(3.0, 5.0), 2),
             "bbox": [round(x - r, 3), round(y - r, 3), round(x + r, 3), round(y + r, 3)], "role": role}
@@ -101,6 +104,8 @@ def make_mock_set(root, n_per_rule=4, seed=0, splits=("validation", "test_id", "
     def panel(rule, setting, objs, style):
         counter[0] += 1
         pid = f"{rule}-s01-{counter[0]:06d}"
+        for o in objs:
+            o["stroke_px"] = objs[0]["stroke_px"]
         img, mask = render(objs)
         img.save(root / "panels" / f"{pid}.png")
         Image.fromarray(np.asarray(mask, dtype=np.uint8)).save(root / "masks" / f"{pid}.png")

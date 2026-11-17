@@ -48,7 +48,8 @@ def token_check(model, evalset, stages, out, n=3):
         for r in recs:
             if not r.get("n_prompt_tokens"):
                 continue
-            pr = build_prompt(evalset.load_problem(r["problem_id"]), st.condition, st.layout, spec, evalset.load_panel)
+            pr = build_prompt(evalset.load_problem(r["problem_id"]), st.condition, st.layout, spec, evalset.load_panel,
+                              evalset.load_scene)
             vis = sum(image_cost(spec, *im.size)[0] for im in pr.images)
             res.append(r["n_prompt_tokens"] - text_tokens(pr.text_with_placeholders(""), tok) - vis)
         print(f"[token-check {st}] residual tokens (should be a small constant across stages): {res}")
@@ -135,7 +136,7 @@ def cmd_score(args):
     print(f"{len(records)} records; summary.csv and b_vs_partner_a.csv written to {args.out}")
     for row in summary:
         if row["level"] in ("stage", "type"):
-            print(f"{row['model']:15} {row['condition']:9} {row['layout']:9} {row['split']:18} {str(row.get('type', '')):3} "
+            print(f"{row['model']:15} {row['condition']:17} {row['layout']:9} {row['split']:18} {str(row.get('type', '')):3} "
                   f"n={row['n_puzzles']:4} panel={row['panel_acc']:.3f} [{row['panel_ci_lo']:.3f},{row['panel_ci_hi']:.3f}] "
                   f"both={row['both_acc']:.3f} unparsable={row['n_unparsable']} errors={row['n_error']}")
 
@@ -145,7 +146,7 @@ def cmd_preview(args):
     evalset = EvalSet(args.set)
     spec = SPECS[args.spec]
     st = Stage.parse(args.stage)
-    pr = bp(evalset.load_problem(args.problem), st.condition, st.layout, spec, evalset.load_panel)
+    pr = bp(evalset.load_problem(args.problem), st.condition, st.layout, spec, evalset.load_panel, evalset.load_scene)
     out = Path(args.dump)
     out.mkdir(parents=True, exist_ok=True)
     (out / "prompt.txt").write_text(pr.text_with_placeholders("<image>"))
@@ -175,7 +176,7 @@ def main(argv=None):
     common.add_argument("--deadline-epoch", type=float, default=None)
     common.add_argument("--token-check", action="store_true")
     p = sub.add_parser("run", parents=[common])
-    p.add_argument("--stages", required=True, help="comma list, e.g. visual:separate:test_id,described:test_id")
+    p.add_argument("--stages", required=True, help="comma list, e.g. visual:separate:test_id,symbolic_complete:test_id")
     sub.add_parser("smoke", parents=[common])
     p = sub.add_parser("plan", parents=[common])
     p.add_argument("--hours", type=float, default=None)

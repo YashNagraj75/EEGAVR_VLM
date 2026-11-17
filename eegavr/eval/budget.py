@@ -39,7 +39,8 @@ def estimate_stage(evalset, model_key, stage, max_problems=None, sample=12, toke
     step = max(1, len(ids) // sample)
     toks, vis, n_img = [], [], []
     for pid in ids[::step][:sample]:
-        pr = build_prompt(evalset.load_problem(pid), stage.condition, stage.layout, spec, _blank)
+        pr = build_prompt(evalset.load_problem(pid), stage.condition, stage.layout, spec, _blank,
+                          load_scene=evalset.load_scene)
         t_text = text_tokens(pr.text_with_placeholders(""), tokenizer) + 30  # + chat-template overhead
         t_vis = sum(image_cost(spec, *im.size)[0] for im in pr.images)
         toks.append(t_text + t_vis)
@@ -93,10 +94,10 @@ def plan_table(evalset, plan, hours, max_problems=None, calib=None, tokenizer=No
 
 
 def format_table(rows):
-    hdr = f"{'pri':>3} {'model':9} {'stage':32} {'n':>5} {'img':>4} {'vis_tok':>7} {'tok/prob':>8} {'max_tok':>7} {'min':>7} {'cum_h':>6} fits"
+    hdr = f"{'pri':>3} {'model':9} {'stage':42} {'n':>5} {'img':>4} {'vis_tok':>7} {'tok/prob':>8} {'max_tok':>7} {'min':>7} {'cum_h':>6} fits"
     lines = [hdr]
     for r in rows:
-        lines.append(f"{str(r['priority']):>3} {r['model']:9} {r['stage']:32} {r['n']:>5} "
+        lines.append(f"{str(r['priority']):>3} {r['model']:9} {r['stage']:42} {r['n']:>5} "
                      f"{r.get('images_per_problem', 0):>4.0f} {r.get('visual_tokens', 0):>7.0f} "
                      f"{r.get('prompt_tokens', 0):>8.0f} {r.get('max_prompt_tokens', 0):>7.0f} "
                      f"{r['est_minutes']:>7.1f} {r['cum_hours']:>6.2f} {'yes' if r['fits'] else 'NO'}"
