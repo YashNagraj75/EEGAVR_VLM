@@ -10,8 +10,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from eegavr.generator.assemble import build_job
 from eegavr.audit.run import pool_equivalence
 from eegavr.generator.export import scene_json, write_panel, ensure_dirs
-from eegavr.generator.settings import (all_settings, RULE_TYPE, RULE_PROGRAM, KNOB_NAME, PARTNERS, TUNING, audit_tier,
-                                      ood_settings, NO_OOD_COUNT)
+from eegavr.generator.settings import (all_settings, RULE_TYPE, RULE_PROGRAM, KNOB_NAME, ALL_PARTNERS, TUNING, audit_tier,
+                                      ood_settings, NO_OOD_COUNT, CODE_BLOCK, PARTNER_CODE)
+from eegavr.audit.competing import cands
 from eegavr.generator.version import GENERATOR_VERSION, CONTRACT_VERSION
 
 SPLITS = {"validation": 50, "test_id": 100, "ood_count": 100, "ood_count_control": 100, "ood_render": 100}
@@ -21,6 +22,16 @@ def _write(args):
     root, pid, sj, sc = args
     write_panel(root, pid, sj, sc)
     return pid
+
+
+def _eq(sid, pools, workers):
+    # 5c equivalence mask: from the audit's saved pool when it matches the current candidate list, else recomputed
+    f = f"{pools}/{sid}_pool.npz" if pools else ""
+    if f and os.path.exists(f):
+        z = np.load(f)
+        if z["eq"].shape[0] == 2 * len(cands()):
+            return {"eq": z["eq"], "own": z["own"]}
+    return pool_equivalence(sid, workers=workers)
 
 
 def main():
@@ -33,13 +44,15 @@ def main():
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--dropped", default="{}")
     ap.add_argument("--skip", default="", help="comma list of rule:split combinations not to build")
+    ap.add_argument("--pools", default="", help="audit directory holding <setting>_pool.npz 5c pools")
     a = ap.parse_args()
     root = a.out
     ensure_dirs(root)
     S = all_settings()
-    need = [sid for sid in S if S[sid]["rule"] in a.rules.split(",") + [PARTNERS.get(r) for r in a.rules.split(",")]
+    rules = a.rules.split(",")
+    need = [sid for sid in S if (S[sid]["rule"] in rules and "partner_of" not in S[sid] or S[sid].get("partner_of") in rules)
             and os.path.exists(f"{a.audit}/{sid}.json")]
-    eq = {sid: pool_equivalence(sid, workers=a.workers) for sid in need}
+    eq = {sid: _eq(sid, a.pools, a.workers) for sid in need}
     reps = {os.path.basename(f)[:-5]: json.load(open(f)) for f in glob.glob(f"{a.audit}/*.json")}
     tiers = {sid: audit_tier(r) for sid, r in reps.items()}
     excl = [sid for sid, t in tiers.items() if t == "excluded"]
@@ -73,7 +86,8 @@ def main():
             "5c_attempts": s["attempts"], "5c_rejected": s["rejected"],
             "5c_resample_rate": s["rejected"] / max(s["attempts"], 1), "kept_rate": s["pairs"] / max(s["draws"], 1),
             "partner_5c_attempts": ps["attempts"], "partner_5c_rejected": ps["rejected"],
-            "render_rejected": s.get("render_rejected", 0),
+            "render_rejected": s.get("render_rejected", 0), "partner_restarts": s.get("partner_restarts", 0),
+            "partner_infeasible_salts": ps.get("infeasible", 0),
             "5c_examples": s["examples"][:5], "partner_5c_examples": ps["examples"][:5]}
     for sp, ids in splits.items():
         with open(f"{root}/splits/{sp}.txt", "w") as f:
@@ -89,8 +103,10 @@ def main():
             counts[p["split"]][key] = counts[p["split"]].get(key, 0) + 1
     man = {"contract_version": CONTRACT_VERSION, "generator_version": GENERATOR_VERSION, "git_commit": commit,
            "rules": {r: {"type": RULE_TYPE[r], "program": RULE_PROGRAM[r], "knob": KNOB_NAME[r],
-                         "a_partner": PARTNERS.get(r)} for r in a.rules.split(",")},
-           "a_partner_settings": {f"{v}p{k}-s01": {"a_rule": v, "base_b_rule": k} for k, v in PARTNERS.items()},
+                         "a_partner": ALL_PARTNERS.get(r)} for r in rules},
+           "a_partner_settings": {f"{v}p{k}-s01": {"a_rule": v, "base_b_rule": k} for k, v in ALL_PARTNERS.items()
+                                  if k in rules and f"{v}p{k}-s01" not in excl},
+           "seed_code_blocks": {"pilot": [1, 40], **CODE_BLOCK, **PARTNER_CODE},
            "tuning": TUNING, "splits": list(SPLITS), "counts": counts,
            "n_panels": len(tasks), "n_problems": sum(len(v) for v in splits.values()),
            "model_input_sizes": [224, 448], "render_styles": {"default": "solid black strokes and fills",

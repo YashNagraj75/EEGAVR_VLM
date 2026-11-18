@@ -33,21 +33,28 @@ def sheet(root, pid, out):
 
 
 def main():
-    # first test_id problem per rule, written as <out>/contact_<rule>.png
+    # first n test_id problems per rule, stacked, written as <out>/contact_<rule>.png
     ap = argparse.ArgumentParser()
     ap.add_argument("root")
     ap.add_argument("out")
+    ap.add_argument("--n", type=int, default=1)
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     ids = open(f"{a.root}/splits/test_id.txt").read().split()
     seen = {}
     for i in ids:
-        key = i.rsplit("-", 2)[0]
-        seen.setdefault(key, i)
-    for key, i in sorted(seen.items()):
-        p = sheet(a.root, i, f"{a.out}/contact_{key}.png")
-        print(key, i, p["positive_side"], [t["answer"] for t in p["test"]])
-
+        seen.setdefault(i.rsplit("-", 2)[0], []).append(i)
+    for key, group in sorted(seen.items()):
+        rows = []
+        for k, i in enumerate(group[:a.n]):
+            p = sheet(a.root, i, f"{a.out}/_row{k}.png")
+            rows.append(Image.open(f"{a.out}/_row{k}.png"))
+            os.remove(f"{a.out}/_row{k}.png")
+            print(key, i, p["positive_side"], [t["answer"] for t in p["test"]])
+        c = Image.new("L", (rows[0].width, sum(r.height for r in rows)), 255)
+        for k, r in enumerate(rows):
+            c.paste(r, (0, k * rows[0].height))
+        c.save(f"{a.out}/contact_{key}.png")
 
 if __name__ == "__main__":
     main()
