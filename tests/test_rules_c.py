@@ -90,3 +90,11 @@ def test_edge_matched_replacement_candidates():
     for sh, rots in m.items():
         d = np.abs(RC.edge_table(sh, False, (2, 2))[rots] / RC.edge_table("circle", False, (2, 2))[0] - 1).max(1)
         assert np.all(d <= RC.MATCH_TOL)
+
+
+def test_count_twin_difference_visible_at_224():
+    for sid in ("C2b-s01", "C2b-oc"):
+        for i in range(10):
+            p = sample_pair(ST[sid], seed_for("audit", sid, i))
+            j = next(k for k, o in enumerate(p["pos"]["objects"]) if o["role"] == "t1")
+            assert poly(p["pos"]["objects"][j]).hausdorff_distance(poly(p["twin"]["objects"][j])) * 224 >= 2.0

@@ -13,6 +13,7 @@ COUNT_TARGET = {"C2b": ("circle", 4), "C3b": ("square", 5)}
 COUNT_REPLACE = {"C2b": ("square", "triangle", "pentagon", "cross"),
                  "C3b": ("circle", "triangle", "pentagon", "cross")}
 MATCH_TOL = 0.04
+RULE_CHECK_PX, RULE_MIN_PX = 224, 2.0
 EXACT_TOL = 0.08
 EXACT_FACTORS = (0.98, 1.0, 1.02)
 EXACT_WEIGHTS = (1.0, 1.0, 1.0, 3.0, 1.0, 4.0, 4.0)
@@ -223,6 +224,8 @@ def _count_by_shape(rng, st):
         rot = 0.0 if new == "circle" else float((rots[int(rng.integers(len(rots)))] + rng.uniform(-0.5, 0.5)) % 360)
         twin[j] = finalize(dict(twin[j], shape=new, mirror=False, rotation=rot))
     if not layout_ok(twin) or (st.get("interior_target") and not _inside_others(twin, j, pos[j])):
+        return None
+    if poly(pos[j]).hausdorff_distance(poly(twin[j])) * RULE_CHECK_PX < RULE_MIN_PX:
         return None
     dec = {(j, f) for f in ("shape", "rotation", "size") if twin[j][f] != pos[j][f]}
     return pos, twin, k, dec, {"replacement": twin[j]["shape"]}
