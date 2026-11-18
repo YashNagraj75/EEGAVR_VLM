@@ -63,3 +63,71 @@ E0000 00:00:1795001394.861075    2820 config.cc:137] Unknown experiment: event_e
 (EngineCore pid=3058) INFO 11-18 11:33:48 [core.py:405] init engine (profile, create kv cache, warmup model) took 151.72 s (compilation: 88.63 s)
 (EngineCore pid=3058) INFO 11-18 11:33:48 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
 (MainProcess pid=2820) INFO 11-18 11:33:49 [hf.py:736] Detected the chat template content format to be 'openai'. You can set `--chat-template-content-format` to override this.
+[qwen3vl-8b visual:separate:validation] 10 selected, 0 done, 10 to run
+[qwen3vl-8b visual:separate:validation] 10/10  1.00 s/problem  errors=0
+[qwen3vl-8b visual:separate:validation] finished in 10 s
+[qwen3vl-8b visual:composite:validation] 10 selected, 0 done, 10 to run
+[qwen3vl-8b visual:composite:validation] 10/10  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:validation] finished in 15 s
+[qwen3vl-8b described:none:validation] 10 selected, 0 done, 10 to run
+[qwen3vl-8b described:none:validation] 10/10  0.58 s/problem  errors=0
+[qwen3vl-8b described:none:validation] finished in 6 s
+[qwen3vl-8b symbolic:none:validation] 10 selected, 0 done, 10 to run
+[qwen3vl-8b symbolic:none:validation] 10/10  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic:none:validation] finished in 9 s
+[qwen3vl-8b symbolic_complete:none:validation] 10 selected, 0 done, 10 to run
+[qwen3vl-8b symbolic_complete:none:validation] 10/10  0.83 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:validation] finished in 9 s
+[token-check visual:separate:validation] residual tokens (should be a small constant across stages): [22, 22, 22]
+[token-check visual:composite:validation] residual tokens (should be a small constant across stages): [9, 9, 9]
+[token-check described:none:validation] residual tokens (should be a small constant across stages): [8, 8, 8]
+[token-check symbolic:none:validation] residual tokens (should be a small constant across stages): [8, 8, 8]
+[token-check symbolic_complete:none:validation] residual tokens (should be a small constant across stages): [8, 8, 8]
+[
+ {
+  "stage": "visual:separate:validation",
+  "run": 10,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:validation",
+  "run": 10,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "described:none:validation",
+  "run": 10,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic:none:validation",
+  "run": 10,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:validation",
+  "run": 10,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ }
+]
+(MainProcess pid=2820) INFO 11-18 11:34:39 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=3058) INFO 11-18 11:34:39 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=3058) INFO 11-18 11:34:39 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=3058) INFO 11-18 11:34:39 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=3058) INFO 11-18 11:34:39 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+smoke wall time 311 s; calibration: {"qwen3vl": {"s_per_prompt_token": 0.00022434159881342227, "tokens": 209715}}
+{'model': 'qwen3vl-8b', 'condition': 'described', 'layout': 'none', 'split': 'validation', 'n_puzzles': 10, 'panel_acc': 0.7, 'n_json': 10, 'n_json_repaired': 0, 'n_regex': 0, 'n_partial': 0, 'n_unparsable': 0, 'n_error': 0}
+{'model': 'qwen3vl-8b', 'condition': 'symbolic', 'layout': 'none', 'split': 'validation', 'n_puzzles': 10, 'panel_acc': 0.8, 'n_json': 10, 'n_json_repaired': 0, 'n_regex': 0, 'n_partial': 0, 'n_unparsable': 0, 'n_error': 0}
+{'model': 'qwen3vl-8b', 'condition': 'symbolic_complete', 'layout': 'none', 'split': 'validation', 'n_puzzles': 10, 'panel_acc': 0.6, 'n_json': 10, 'n_json_repaired': 0, 'n_regex': 0, 'n_partial': 0, 'n_unparsable': 0, 'n_error': 0}
+{'model': 'qwen3vl-8b', 'condition': 'visual', 'layout': 'composite', 'split': 'validation', 'n_puzzles': 10, 'panel_acc': 0.6, 'n_json': 10, 'n_json_repaired': 0, 'n_regex': 0, 'n_partial': 0, 'n_unparsable': 0, 'n_error': 0}
+{'model': 'qwen3vl-8b', 'condition': 'visual', 'layout': 'separate', 'split': 'validation', 'n_puzzles': 10, 'panel_acc': 0.55, 'n_json': 10, 'n_json_repaired': 0, 'n_regex': 0, 'n_partial': 0, 'n_unparsable': 0, 'n_error': 0}
