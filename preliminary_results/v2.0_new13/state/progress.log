@@ -1,0 +1,10 @@
+[11:18:57] === setup | window 32 h, 32.0 h left | backend vllm
+[11:21:21] repo at 70a9c56
+[11:21:46] pilot set ready: /home/ubuntu/EEGAVR_VLM/data/eegavr_v2.0_new13 (manifest md5 07832609a62a5922db4d59b13e2cbe14)
+17G	/home/ubuntu/models/Qwen3-VL-8B-Instruct
+[11:29:31] === setup finished
+[11:29:31] === smoke | window 32 h, 31.82 h left | backend vllm
+[11:29:31] smoke qwen3vl
+[11:34:56] === smoke finished
+[11:36:10] === full | window 32 h, 31.71 h left | backend vllm
+[11:36:10] full run: 17 Qwen stages, --deadline-epoch 1795037770 (start + 10 h)
