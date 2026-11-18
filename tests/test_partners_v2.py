@@ -33,3 +33,10 @@ def test_partner_pairs_flip_only_the_a_rule():
             assert layout_ok(P) and layout_ok(T) and abs(RA.min_gap(P) - RA.min_gap(T)) < 1e-9
             assert [(o["x"], o["y"]) for o in P] == [(o["x"], o["y"]) for o in T]
         assert built >= 6, b
+
+
+def test_failed_partner_not_assembled():
+    from eegavr.generator.settings import ALL_PARTNERS, PARTNER_FAILED, audit_tier
+    assert "B2" not in ALL_PARTNERS and PARTNER_FAILED["B2"] == "A2"
+    rep = {"setting_id": "A2pB2-s01", "setting": {"partner_of": "B2"}}
+    assert audit_tier(rep) == "excluded"
