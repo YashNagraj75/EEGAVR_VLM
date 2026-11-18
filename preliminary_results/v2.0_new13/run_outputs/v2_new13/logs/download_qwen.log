@@ -1,0 +1,6 @@
+[90mHint: The `hf-cli` skill is not installed. Run `hf skills add -g` to teach your AI agents how to use the `hf` CLI.[0m
+Fetching 16 files:   0%|          | 0/16 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Still waiting to acquire lock on /home/ubuntu/models/Qwen3-VL-8B-Instruct/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /home/ubuntu/models/Qwen3-VL-8B-Instruct/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Still waiting to acquire lock on /home/ubuntu/models/Qwen3-VL-8B-Instruct/.cache/huggingface/.gitignore.lock (elapsed: 0.1 seconds)
+Fetching 16 files:  12%|█▎        | 2/16 [00:00<00:01, 10.11it/s]Fetching 16 files:  56%|█████▋    | 9/16 [00:00<00:00, 34.85it/s]Fetching 16 files:  75%|███████▌  | 12/16 [00:20<00:00, 34.85it/s]Fetching 16 files:  81%|████████▏ | 13/16 [00:50<00:15,  5.12s/it]Fetching 16 files:  88%|████████▊ | 14/16 [01:16<00:15,  7.71s/it]Fetching 16 files:  94%|█████████▍| 15/16 [01:20<00:07,  7.12s/it]Fetching 16 files:  94%|█████████▍| 15/16 [01:40<00:07,  7.12s/it]
