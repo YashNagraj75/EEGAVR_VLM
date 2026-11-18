@@ -27,7 +27,7 @@ def test_registered():
 
 
 def test_new_settings_coded_after_pilot():
-    pilot = [k for k in ST if k.split("-")[0] not in BL.RULES]
+    pilot = [k for k in ST if SETTING_CODE[k] <= 40]
     new = [k for k in ST if k.split("-")[0] in BL.RULES]
     assert max(SETTING_CODE[k] for k in pilot) < min(SETTING_CODE[k] for k in new)
 

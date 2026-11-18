@@ -47,7 +47,7 @@ def test_chirality_constants_are_lower_bounds():
 def test_registered_without_moving_pilot_codes():
     assert {"B6", "B7"} <= set(RULE_FN) and {"B6", "B7"} <= set(truth({"objects": []}))
     assert SETTING_CODE["A1-s01"] == 1 and SETTING_CODE["B4-or"] == 30 and SETTING_CODE["A1pB4-s01"] == 36
-    assert SETTING_CODE["C1b-or"] == 40 and min(SETTING_CODE[k] for k in BO) == 41
+    assert SETTING_CODE["C1b-or"] == 40 and min(SETTING_CODE[k] for k in BO) == 240
     assert any(k.startswith("B6:") for k in candidate_predicates()) and "B7:mirror pair" in candidate_predicates()
 
 
