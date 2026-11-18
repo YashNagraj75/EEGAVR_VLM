@@ -12,7 +12,6 @@ GAP_TOL = 1e-9
 B6_OFF = (3.0, 7.0)
 ROLE_RESID = (0.0, 2.0, -2.0)
 A4_TARGETS = ("cross", "square", "triangle", "pentagon")
-A5_TWIN = ("square", "pentagon")
 B8_SUBST = ("square", "cross", "L", "right_trapezoid", "circle", "irregular_pentagon")
 
 
@@ -239,7 +238,7 @@ def _gap_tilt(twin, j, sign, lo):
 
 
 def _a5_b7(rng, objs, state):
-    # L roles become another chiral shape; one distractor is a cross or L, the others and the twin share one convex shape
+    # L roles become another chiral shape; one distractor is a cross or L, its twin a random convex shape (as rule A5)
     roles = [k for k, o in enumerate(objs) if o["role"] in ("t1", "t2")]
     objs = _roles(_clone(objs))
     sh = objs[roles[0]]["shape"]
@@ -248,17 +247,14 @@ def _a5_b7(rng, objs, state):
         for k in roles:
             objs = _set(objs, k, shape=sh)
     cand = [k for k in range(len(objs)) if k not in roles]
+    convex = [s for s in RA.CONVEX_SWAP if s not in (sh, CONFUSABLE.get(sh))]
     for k in cand:
         if objs[k]["shape"] in CONCAVE or objs[k]["shape"] in (sh, CONFUSABLE.get(sh)):
-            objs = _set(objs, k, shape="square", mirror=False)
+            objs = _set(objs, k, shape=convex[int(rng.integers(len(convex)))], mirror=False)
     if not cand:
         return None
     j = cand[int(rng.integers(len(cand)))]
-    new = [s for s in A5_TWIN if s != CONFUSABLE.get(sh)]
-    new = new[int(rng.integers(len(new)))]
-    for k in cand:
-        if k != j:
-            objs = _set(objs, k, shape=new, mirror=False, fill=False)
+    new = convex[int(rng.integers(len(convex)))]
     conc = CONCAVE[int(rng.integers(len(CONCAVE)))]
     d = float(rng.uniform(*RA.FULL_A["A5"]))
     size = d / RA.UNIT_DEPTH[conc]
@@ -266,10 +262,11 @@ def _a5_b7(rng, objs, state):
         return None
     pos = _set(objs, j, shape=conc, size=size, rotation=float(rng.uniform(0, 360)), fill=False,
                mirror=bool(rng.random() < 0.5), role="t1")
-    rot = RA.matched_rotation(rng, pos, j, new, False)
+    mir = bool(rng.random() < 0.5) and CHIRAL[new]
+    rot = RA.matched_rotation(rng, pos, j, new, mir)
     if rot is None:
         return None
-    twin = _set(pos, j, shape=new, mirror=False, rotation=rot)
+    twin = _set(pos, j, shape=new, mirror=mir, rotation=rot)
     if abs(RA._ink(twin) - RA._ink(pos)) / RA._ink(pos) > RA.INK_TOL:
         return None
     return pos, twin, j, d
