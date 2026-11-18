@@ -5,7 +5,7 @@ from pathlib import Path
 
 from PIL import Image
 
-SUPPORTED_CONTRACT_VERSIONS = {1, "1", "v1", 1.1, "1.1", "v1.1"}
+SUPPORTED_CONTRACT_VERSIONS = {1, "1", "v1", 1.1, "1.1", "v1.1", 1.2, "1.2", "v1.2"}
 SPLITS = ("validation", "test_id", "ood_count", "ood_count_control", "ood_render")
 
 # Scoring-only problem fields (contract list plus the answer-bearing positive_side).

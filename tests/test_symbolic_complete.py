@@ -18,7 +18,8 @@ from eegavr.generator.scene import SHAPES, make_obj, poly
 from eegavr.generator.settings import all_settings
 
 RELATION_WORDS = ("role", "inside", "outside", "touch", "touching", "contain", "contains", "enclose", "nested", "above",
-                  "below", "under", "over", "left_of", "right_of", "between", "collinear", "same_shape", "relation",
+                  "below", "under", "over", "left_of", "right_of", "between", "collinear", "same_shape", "same_orientation",
+                  "mirror_image", "closest_pair", "relation",
                   "relations", "adjacent", "overlap", "near", "t1", "t2", "distractor", "idx", "seed", "id")
 RELATION_RE = re.compile(r"\b(" + "|".join(RELATION_WORDS) + r")\b", re.IGNORECASE)
 

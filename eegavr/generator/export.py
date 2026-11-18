@@ -1,4 +1,5 @@
 import hashlib
+from itertools import combinations
 import json
 import os
 import numpy as np
@@ -7,12 +8,13 @@ from .scene import poly, CHIRAL
 from .render import render, render_mask
 from .version import GENERATOR_VERSION
 from .predicates import nest_pairs, touch_pairs
+from .rules_blayout import triple_dev, ON_TOL
+from .rules_borient import orientation_pairs, mirror_pairs
 
 NAMES = {"circle": "circle", "square": "square", "triangle": "triangle", "pentagon": "pentagon", "cross": "cross",
          "L": "L-shape", "right_trapezoid": "right-angled trapezoid", "irregular_pentagon": "irregular pentagon"}
 OBJ_KEYS = ("idx", "shape", "chiral", "symmetry_order", "size", "radius", "fill", "x", "y", "rotation", "mirror",
             "stroke_px", "bbox", "role")
-COLLINEAR_TOL = 0.01
 
 
 def _r(v, d=6):
@@ -55,29 +57,23 @@ def relations(sc, order):
     for i, j in touch_pairs(sc):
         if not any({i, j} == {a, b} for a, b in nest_pairs(sc)):
             R.append(["touching", *sorted((did[i], did[j]))])
-    P = np.array([[o["x"], o["y"]] for o in ob])
     n = len(ob)
-    for a in range(n):
-        for b in range(a + 1, n):
-            for c in range(b + 1, n):
-                tri = (a, b, c)
-                dev = []
-                for m in tri:
-                    e = [t for t in tri if t != m]
-                    u = P[e[1]] - P[e[0]]
-                    dev.append(abs(np.cross(u, P[m] - P[e[0]])) / (np.linalg.norm(u) + 1e-12))
-                if max(dev) <= COLLINEAR_TOL:
-                    R.append(["collinear", *sorted(did[t] for t in tri)])
-                    for m in tri:
-                        e = [t for t in tri if t != m]
-                        u = P[e[1]] - P[e[0]]
-                        s = np.dot(P[m] - P[e[0]], u) / np.dot(u, u)
-                        if 0 < s < 1:
-                            R.append(["between", did[m], *sorted(did[t] for t in e)])
+    for tri in combinations(range(n), 3):
+        dev, k = triple_dev(*(ob[t] for t in tri))
+        if dev <= ON_TOL:
+            R.append(["collinear", *sorted(did[t] for t in tri)])
+            R.append(["between", did[tri[k]], *sorted(did[t] for t in tri if t != tri[k])])
     for a in range(n):
         for b in range(a + 1, n):
             if ob[a]["shape"] == ob[b]["shape"]:
                 R.append(["same_shape", *sorted((did[a], did[b]))])
+    for a, b in orientation_pairs(sc):
+        R.append(["same_orientation", *sorted((did[a], did[b]))])
+    for a, b in mirror_pairs(sc):
+        R.append(["mirror_image", *sorted((did[a], did[b]))])
+    if n >= 2:
+        d = min((np.hypot(ob[a]["x"] - ob[b]["x"], ob[a]["y"] - ob[b]["y"]), a, b) for a, b in combinations(range(n), 2))
+        R.append(["closest_pair", *sorted((did[d[1]], did[d[2]]))])
     sc.pop("_polys", None)
     return R
 

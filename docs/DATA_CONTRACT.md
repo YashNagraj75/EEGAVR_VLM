@@ -88,3 +88,28 @@ except for an explicit version check (the eval harness accepts only `1`; add `"1
   (per-panel 5d on the exported set, PIL BOX, 224/256/448 px).
 - `manifest.json` adds `a_partner_settings`, `tuning`, `render_styles`, `not_applicable`, `audit_status`,
   `dropped`, `assembly_stats`.
+
+## Changes in contract 1.2 (2026-11-17, integration track; full set v2.0)
+`manifest.json` carries `"contract_version": "1.2"`. Readers of 1.1 read 1.2 unchanged apart from the version check
+(the harness accepts `"1.2"`).
+- Rules: the 19-rule library (A1–A6, B1–B9, C1b–C3b, C4b; C1 and C4 are excluded) and A partners
+  `A2pB2, A3pB5, A4pB6, A5pB7, A2pB8, A3pB9` besides the pilot's `A1pB1, A6pB3, A1pB4`.
+  `manifest.rules[r].a_partner` names the partner of every B rule.
+- Scene `truth` holds every library predicate (additive keys `A3 A4 A5 B2 B5 B6 B7 B8 B9 C2b C3b C4 C4b`).
+- Symbolic relations (`symbolic[*].relations`), recomputed for every v2.0 problem, frozen pilot problems included:
+  - `collinear` = `[a, b, c]` when the height of the centroid triangle over its longest side is <= 0.004 (the B5/B8
+    tolerance; was: every centroid within 0.01 of the line through the other two). `between` = `[m, a, b]` for each
+    collinear triple, m = the object opposite the longest side.
+  - new `same_orientation` = `[a, b]`: same non-circular shape and handedness, orientations equal modulo the shape's
+    symmetry within 1 degree (B6).
+  - new `mirror_image` = `[a, b]`: same chiral shape, opposite `mirrored` flag (B7).
+  - new `closest_pair` = `[a, b]`: the pair with the smallest centroid distance, one per panel (B9).
+  - With `above`, `left_of`, `inside`, `touching` and `same_shape`, every B rule is a function of the relation list
+    and the object shapes (tested in `tests/test_relations_v12.py`), so `symbolic` is an upper bound for all nine.
+- `symbolic_complete` is built by the harness from `scenes/` at prompt time (`eegavr/eval/geometry.py`); it is
+  unchanged by 1.2 and therefore consistent with v2.0 by construction.
+- Frozen pilot problems (copied from pilot v1.1): panel images, masks, scene objects and problem composition are
+  unchanged; `described`/`symbolic` are recomputed from the exactly regenerated scenes and `truth` gains the new keys.
+- `manifest.json` adds `seed_code_blocks`; `assembly_stats` adds `partner_restarts` and `partner_infeasible_salts`.
+- Seeds: v2.0 settings use fixed code blocks (`settings.CODE_BLOCK`), disjoint from the pilot codes 1–40, so no v2.0
+  seed equals a v1.1 seed.
