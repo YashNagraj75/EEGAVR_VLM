@@ -1,10 +1,14 @@
 import numpy as np
 from .rules import _finish, check_twin, _clone
 from .scene import index, finalize
+from .partners_v2 import V20_PARTNERS, build_v2
 
 
 def partner_pair(partner_rule, b_pair, state, salt=0, pick="random"):
     # A-partner pair from one B base pair: geometry kept, fills set by the A rule, B state chosen by caller
+    b_rule = b_pair["setting_id"].split("-")[0]
+    if b_rule in V20_PARTNERS:
+        return _partner_v2(partner_rule, b_rule, b_pair, state, salt, pick)
     base = b_pair["pos"] if state else b_pair["twin"]
     objs = [dict(o, fill=False, role="distractor") for o in base["objects"]]
     rng = np.random.default_rng([b_pair["seed"], 11, int(state), int(salt)])
@@ -41,3 +45,17 @@ def partner_pair(partner_rule, b_pair, state, salt=0, pick="random"):
         raise RuntimeError(f"partner twin rejected: {bad}")
     return {"pos": P, "twin": T, "knob": float(knob), "seed": b_pair["seed"], "b_state": bool(state),
             "base_setting_id": b_pair["setting_id"], "salt": int(salt), "pick": pick, "draws": 1, "meta": {}}
+
+
+def _partner_v2(partner_rule, b_rule, b_pair, state, salt, pick):
+    # v2.0 partners (partners_v2): None when the base scene admits no valid pair for this salt
+    r = build_v2(b_rule, b_pair, state, salt)
+    if r is None:
+        return None
+    pos, twin, j, knob = r
+    P, T = _finish(index(_clone(pos)), "default"), _finish(index(_clone(twin)), "default")
+    declared = {(j, f) for f in ("shape", "rotation", "mirror", "size", "fill") if pos[j][f] != twin[j][f]}
+    if check_twin(partner_rule, P, T, declared):
+        return None
+    return {"pos": P, "twin": T, "knob": float(knob), "seed": b_pair["seed"], "b_state": bool(state),
+            "base_setting_id": b_pair["setting_id"], "salt": int(salt), "pick": pick, "draws": 1, "meta": {"target": j}}

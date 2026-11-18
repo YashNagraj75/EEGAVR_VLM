@@ -1,6 +1,6 @@
 import hashlib
 import numpy as np
-from .settings import all_settings, seed_for, SPLIT_CODE, SETTING_CODE, PARTNERS, active_id_settings, ood_settings
+from .settings import all_settings, seed_for, SPLIT_CODE, SETTING_CODE, ALL_PARTNERS, active_id_settings, ood_settings
 from .rules import sample_pair
 from .partners import partner_pair
 from ..audit.competing import literal_matrix, competing
@@ -107,13 +107,16 @@ def build_problem(rule, split, k, eqmasks, stats, tuning=None, start=0):
 
 def build_partner(b_rule, pairs, eq, rng, stats, exclude=()):
     # A partner from the same 7 base pairs; B state balanced 3/3 on the support pairs, random on the test pair
-    a_rule = PARTNERS[b_rule]
+    a_rule = ALL_PARTNERS[b_rule]
     for salt in range(PARTNER_TRIES):
         states = list(rng.permutation([True] * 3 + [False] * 3)) + [bool(rng.random() < 0.5)]
         picks = ["random"] * len(pairs)
         a, b = rng.choice(len(pairs), 2, replace=False)
         picks[a], picks[b] = "max", "min"
         pp = [partner_pair(a_rule, bp, s, salt, pk) for bp, s, pk in zip(pairs, states, picks)]
+        if any(q is None for q in pp):
+            stats["infeasible"] = stats.get("infeasible", 0) + 1
+            continue
         for q, bp in zip(pp, pairs):
             q["counter"], q["split"] = bp["counter"], bp["split"]
         comp = check_5c(pp, eq)
@@ -147,19 +150,20 @@ def build_job(args):
         while True:
             st, pairs, att = build_problem(rule, split, k, eqmasks, stats, tuning, start)
             partner = None
-            if split == "test_id" and rule in PARTNERS:
-                psid = f"{PARTNERS[rule]}p{rule}-s01"
+            psid = f"{ALL_PARTNERS.get(rule)}p{rule}-s01"
+            if split == "test_id" and rule in ALL_PARTNERS and psid not in (tuning or {}).get("_exclude", ()):
                 rng = np.random.default_rng([SPLIT_CODE[split], SETTING_CODE[psid], k, att])
                 partner = build_partner(rule, pairs, eqmasks[psid], rng, pstats)
                 if partner is None:
+                    stats["partner_restarts"] = stats.get("partner_restarts", 0) + 1
                     start = att + 1
                     continue
             break
         sid = st["id"]
         groups = [(rule, sid, pairs, f"{rule}-{split}-{k + 1:04d}", None)]
         if partner is not None:
-            groups.append((PARTNERS[rule], f"{PARTNERS[rule]}p{rule}-s01", partner,
-                           f"{PARTNERS[rule]}p{rule}-{split}-{k + 1:04d}", sid))
+            groups.append((ALL_PARTNERS[rule], f"{ALL_PARTNERS[rule]}p{rule}-s01", partner,
+                           f"{ALL_PARTNERS[rule]}p{rule}-{split}-{k + 1:04d}", sid))
         pids = [g[3] for g in groups]
         for gi, (r, gsid, prs, prob_id, base_sid) in enumerate(groups):
             ids = []
@@ -200,7 +204,7 @@ def regenerate(scene_json):
         cands = []
         for state in (True, False):
             pp = partner_pair(S[rg["setting_id"]]["rule"], bp, state, rg["salt"], rg.get("pick", "random"))
-            cands += [pp["pos"], pp["twin"]]
+            cands += [pp["pos"], pp["twin"]] if pp else []
     else:
         p = sample_pair(S[rg["setting_id"]], scene_json["seed"], control=rg["control"])
         cands = [p["pos"], p["twin"]]

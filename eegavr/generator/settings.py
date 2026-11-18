@@ -4,6 +4,7 @@ from .rules_a import register_settings as register_a
 from . import rules_blayout
 from . import rules_borient as _borient
 from . import rules_c as RC
+from .partners_v2 import V20_PARTNERS
 
 ID_N = (2, 4)
 OOD_N = (7, 8)
@@ -13,6 +14,7 @@ RULE_TYPE = {"A1": "A", "A6": "A", "B1": "B", "B3": "B", "B4": "B", "C1": "C", "
 V11_RULES = ("C1b",)
 PARTNERS = {"B1": "A1", "B3": "A6", "B4": "A1"}
 PARTNER_FAILED = {"C1b": "A2"}
+ALL_PARTNERS = {**PARTNERS, **V20_PARTNERS}
 NO_OOD_COUNT = ("C1",)
 EXTRA_ID, EXTRA_OOD, V20_RULES = {}, {}, []
 RULE_PROGRAM = {
@@ -148,11 +150,13 @@ def all_settings():
     for r in V20_RULES:
         for st in id_settings(r) + list(ood_settings(r).values()):
             S[st["id"]] = st
+    for b, a in V20_PARTNERS.items():
+        S[f"{a}p{b}-s01"] = _partner(a, b)
     return S
 
 
 def _partner(a, b):
-    kn = {"A1": KNOB_NAME["A1"], "A2": KNOB_NAME["A2"]}.get(a, "derived from the B3 base scene")
+    kn = KNOB_NAME[a] if a in ("A1", "A2", "A3", "A4", "A5") else "derived from the B3 base scene"
     return {"id": f"{a}p{b}-s01", "rule": a, "type": "A", "partner_of": b, "knob": None, "knob_name": kn,
             "style": "default"}
 

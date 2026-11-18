@@ -16,6 +16,7 @@ from .competing import literal_matrix, equivalence_mask
 from .probes import run_probes, run_univariate
 
 SIZES = (224, 448)
+PARTNER_BASES = 9
 
 
 def rows_scene_stub():
@@ -27,8 +28,13 @@ def make_pair(st, i, split="audit"):
     # the i-th pair of a setting (partner settings derive from the B setting's pairs)
     if "partner_of" in st:
         bst = b_setting_for(st["partner_of"], i)
-        bp = sample_pair(bst, seed_for(split, bst["id"], i))
-        return partner_pair(st["rule"], bp, state=(i % 2 == 0))
+        for k in range(PARTNER_BASES):
+            bp = sample_pair(bst, seed_for(split, bst["id"], i + k * 10**5))
+            q = partner_pair(st["rule"], bp, state=(i % 2 == 0))
+            if q is not None:
+                q["draws"] = k + 1
+                return q
+        raise RuntimeError(f"{st['id']}: no partner pair for audit pair {i}")
     ctrl = st.get("c1_controls", ["equal_size", "equal_ink"])[i % 2] if st["rule"] == "C1" else None
     p = sample_pair(st, seed_for(split, st["id"], i), control=ctrl)
     p["meta"]["control"] = ctrl
