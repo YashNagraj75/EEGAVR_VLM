@@ -58,7 +58,7 @@ def equivalence_mask(L_pool, y_pool, names=None, rule=None):
 
 
 def competing(L_prob, y_prob, eqmask, names):
-    # non-excused candidates sorting all panels; columns are [positives..., their twins...] in the same order
+    # non-excused candidates sorting all panels (a conjunct that is an own literal sorting alone excuses the pair)
     if isinstance(eqmask, dict):
         own, eqm = eqmask["own"], eqmask["eq"]
         h = L_prob.shape[1] // 2
@@ -70,6 +70,10 @@ def competing(L_prob, y_prob, eqmask, names):
     cnt = _pair_counts(L_prob, y_prob)
     n = len(y_prob)
     hit = ((cnt == n) | (cnt == 0)) & ~eqm
+    if isinstance(eqmask, dict):
+        d = np.diag(cnt)
+        refine = own & ((d == n) | (d == 0))
+        hit &= ~(refine[:, None] | refine[None, :])
     P = len(names)
     lit = names + [f"NOT {x}" for x in names]
     ii, jj = np.nonzero(np.triu(hit))
