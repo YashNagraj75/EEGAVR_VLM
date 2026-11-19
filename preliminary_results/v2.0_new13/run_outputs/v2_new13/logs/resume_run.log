@@ -465,3 +465,103 @@ E0000 00:00:1795067196.955850   19725 config.cc:137] Unknown experiment: event_e
 [qwen3vl-8b visual:composite:ood_render] 544/1300  1.37 s/problem  errors=0
 [qwen3vl-8b visual:composite:ood_render] 560/1300  1.36 s/problem  errors=0
 [qwen3vl-8b visual:composite:ood_render] 576/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 592/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 608/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 624/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 640/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 656/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 672/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 688/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 704/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 720/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 736/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 752/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 768/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 784/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 800/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 816/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 832/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 848/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 864/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 880/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 896/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 912/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 928/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 944/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 960/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 976/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 992/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1008/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1024/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1040/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1056/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1072/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1088/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1104/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1120/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1136/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1152/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1168/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1184/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1200/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1216/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1232/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1248/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1264/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1280/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1296/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1300/1300  1.60 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] finished in 1876 s
+[
+ {
+  "stage": "symbolic:none:ood_count_control",
+  "run": 490,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count_control",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count_control",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_render",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ }
+]
+(MainProcess pid=19725) INFO 11-19 08:28:22 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [utils.py:648] [shutdown] Process manager: force killing remaining processes count=1
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [utils.py:653] [shutdown] Process manager: force killing remaining process EngineCore pid 20256
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [system_utils.py:248] [shutdown] force killing sub process python pid 20977
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [system_utils.py:248] [shutdown] force killing sub process python pid 20981
