@@ -25,4 +25,8 @@ Start with the PDF. It explains every rule, how to read the scores and the main 
 - Results tarball md5 `8a9e357cc1bddd16a92b0263f0a5988c`. Run on one RTX A6000, 8.39 GPU hours.
 
 ## Datasets
-The stimulus sets (panel images, scenes, problems) are too large for git. They are not in this repository.
+The stimulus sets (panel images, scenes, problems) are too large for git. They are attached to the release [v2.0-results](https://github.com/YashNagraj75/EEGAVR_VLM/releases/tag/v2.0-results):
+- [eegavr_v2.0_new13.tar.gz](https://github.com/YashNagraj75/EEGAVR_VLM/releases/download/v2.0-results/eegavr_v2.0_new13.tar.gz): the evaluation set, 562 MB, md5 `689d74e36bf80e3b3ab743f2cf6deb6e`. It holds 6,350 puzzles and 88,900 panels, with scenes, problem files, splits and audit tables.
+- [eval_results_v2_new13_qwen3vl8b.tgz](https://github.com/YashNagraj75/EEGAVR_VLM/releases/download/v2.0-results/eval_results_v2_new13_qwen3vl8b.tgz): all 24,600 model answers plus run logs, 1.1 MB, md5 `8a9e357cc1bddd16a92b0263f0a5988c`.
+
+Check a download with `md5sum <file>`.
