@@ -1,0 +1,567 @@
+W1119 05:46:33.971000 19725 torch/_opaque_base.py:6] torch._opaque_base is deprecated, use torch._custom_class_base instead
+W1119 05:46:33.972000 19725 torch/_library/opaque_object.py:288] register_opaque_type is deprecated, use register_custom_class instead
+W1119 05:46:33.973000 19725 torch/_library/opaque_object.py:211] typ='value' is deprecated, use typ='constant' instead
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1795067196.955789   19725 config.cc:137] Unknown experiment: event_engine_dns
+E0000 00:00:1795067196.955850   19725 config.cc:137] Unknown experiment: event_engine_dns_non_client_channel
+(MainProcess pid=19725) INFO 11-19 05:46:41 [startup.py:96] non-default args: {'dtype': 'bfloat16', 'max_model_len': 32768, 'gpu_memory_utilization': 0.9, 'max_num_seqs': 16, 'disable_log_stats': True, 'limit_mm_per_prompt': {'image': 14, 'video': 0}, 'model': '/home/ubuntu/models/Qwen3-VL-8B-Instruct'}
+(MainProcess pid=19725) INFO 11-19 05:46:41 [model.py:744] Resolved architecture: Qwen3VLForConditionalGeneration
+(MainProcess pid=19725) INFO 11-19 05:46:41 [model.py:2170] Using max model len 32768
+(MainProcess pid=19725) WARNING 11-19 05:46:41 [flashinfer.py:99] FlashInfer kernels are disabled: flashinfer-cubin is not installed and nvcc (CUDA_HOME, CUDA_PATH, PATH or /usr/local/cuda) or ninja (PATH) is missing. Set CUDA_HOME to a CUDA toolkit and put ninja on PATH, or run `vllm download-kernels`.
+(MainProcess pid=19725) INFO 11-19 05:46:42 [scheduler.py:310] Chunked prefill is enabled with max_num_batched_tokens=8192.
+(MainProcess pid=19725) INFO 11-19 05:46:42 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(EngineCore pid=20256) INFO 11-19 05:46:56 [core.py:139] Initializing a V1 LLM engine (v0.33.0) with config: model='/home/ubuntu/models/Qwen3-VL-8B-Instruct', speculative_config=None, tokenizer='/home/ubuntu/models/Qwen3-VL-8B-Instruct', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=32768, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, aux_output_config=AuxOutputConfig(enable_return_routed_experts=False, max_bytes=None), kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, per_request_spec_decode_metrics='none', kv_cache_metrics=False, kv_cache_metrics_sample=0.01, custom_histogram_buckets=None, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_mode='warn', jit_monitor_verbose=False), seed=0, served_model_name=/home/ubuntu/models/Qwen3-VL-8B-Instruct, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::qwen4_exp_ple_short_conv', 'vllm::qwen4_exp_qsa_with_output', 'vllm::qwen4_exp_qsa_prepare_with_output', 'vllm::linear_attention', 'vllm::qwen_gdn_attention_core', 'vllm::qwen_gdn_attention_core_fused_norm_packed', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::hpc_rope_norm_forward', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'cudagraph_decoder_replay': True, 'decoder_replay_cudagraph_capture_sizes': [], 'decoder_replay_trim_threshold': 768, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'fuse_allreduce_rms': False, 'enable_qk_norm_rope_fusion': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False, 'fuse_qk_norm_rope_kvcache': False}, 'max_cudagraph_capture_size': 32, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native']), enable_flashinfer_autotune=True, enable_rocm_segmented_attn_autotune=False, enable_cutedsl_warmup=True, enable_jit_warmup=True, monokernel=False, moe_backend='auto', sparse_indexer_topk_backend='auto', linear_backend='auto', linear_backend_per_quant=None)
+(EngineCore pid=20256) INFO 11-19 05:47:00 [parallel_state.py:1929] world_size=1 rank=0 local_rank=0 distributed_init_method=file:///tmp/vllm_dist_5252411fc4e74c9295d0ddb92b4507a2 backend=nccl
+(EngineCore pid=20256) INFO 11-19 05:47:00 [parallel_state.py:2385] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, ETP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=20256) INFO 11-19 05:47:00 [gpu_worker.py:513] Using V2 Model Runner
+(EngineCore pid=20256) INFO 11-19 05:47:03 [model_runner.py:399] Loading model from scratch...
+(EngineCore pid=20256) INFO 11-19 05:47:03 [cuda.py:567] Using backend AttentionBackendEnum.FLASH_ATTN for vit attention
+(EngineCore pid=20256) INFO 11-19 05:47:03 [mm_encoder_attention.py:372] Using AttentionBackendEnum.FLASH_ATTN for MMEncoderAttention.
+(EngineCore pid=20256) INFO 11-19 05:47:04 [cuda.py:508] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(EngineCore pid=20256) INFO 11-19 05:47:04 [flash_attn.py:1122] Using FlashAttention version 2
+(EngineCore pid=20256) INFO 11-19 05:47:05 [base_loader.py:82] Initializing model took 2.520022 seconds
+(EngineCore pid=20256) INFO 11-19 05:47:05 [weight_utils.py:1144] Filesystem type for checkpoints: OVERLAY. Checkpoint size: 16.33 GiB. Available RAM: 41.41 GiB.
+(EngineCore pid=20256) INFO 11-19 05:47:05 [weight_utils.py:1167] Auto-prefetch is disabled because the filesystem (OVERLAY) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+Loading safetensors checkpoint shards:   0% Completed | 0/4 [00:00<?, ?it/s]
+Loading safetensors checkpoint shards:  25% Completed | 1/4 [00:04<00:14,  4.75s/it]
+Loading safetensors checkpoint shards:  50% Completed | 2/4 [00:10<00:10,  5.21s/it]
+(MainProcess pid=19725) INFO 11-19 05:47:20 [base.py:283] Multi-modal warmup completed in 24.294s
+Loading safetensors checkpoint shards:  75% Completed | 3/4 [00:15<00:05,  5.27s/it]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:18<00:00,  4.36s/it]
+Loading safetensors checkpoint shards: 100% Completed | 4/4 [00:18<00:00,  4.65s/it]
+
+(EngineCore pid=20256) INFO 11-19 05:47:24 [default_loader.py:506] Loading weights took 18.72 seconds
+(EngineCore pid=20256) INFO 11-19 05:47:27 [model_runner.py:428] Model loading took 16.63 GiB memory and 24.916861 seconds
+(EngineCore pid=20256) INFO 11-19 05:47:27 [topk_topp_sampler.py:121] FlashInfer top-p/top-k sampling disabled via VLLM_USE_FLASHINFER_SAMPLER=0.
+(EngineCore pid=20256) WARNING 11-19 05:47:27 [torch_utils.py:269] OMP_NUM_THREADS=6 is set; leaving Torch threads at 6 for serving. Multi-threaded torch CPU ops during serving can degrade performance through spin-wait contention and cgroup CPU-quota throttling.
+(EngineCore pid=20256) INFO 11-19 05:47:27 [utils.py:381] Using LBNHC KV cache layout.
+(EngineCore pid=20256) INFO 11-19 05:47:28 [encoder_runner.py:131] Encoder cache will be initialized with a budget of 16384 tokens, and profiled with 1 image items of the maximum feature size.
+(EngineCore pid=20256) INFO 11-19 05:47:40 [caching.py:342] reconstructed serializable fn from standalone compile artifacts. num_artifacts=5 num_submods=37
+(EngineCore pid=20256) INFO 11-19 05:47:40 [decorators.py:326] [backbone] Directly load AOT compilation from path /home/ubuntu/.cache/vllm/torch_compile_cache/torch_aot_compile/9131ad0e0613bee67a544b783273f8b76aa04db2bfc84d4273d5a82e01a2c042/rank_0_0/model
+(EngineCore pid=20256) INFO 11-19 05:47:40 [monitor.py:62] [backbone] torch.compile took 0.92 s in total
+(EngineCore pid=20256) INFO 11-19 05:47:40 [monitor.py:91] [backbone] Initial profiling/warmup run took 0.24 s
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/7 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):  14%|█▍        | 1/7 [00:00<00:03,  1.61it/s]Capturing CUDA graphs (PIECEWISE):  29%|██▊       | 2/7 [00:01<00:02,  2.00it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 3/7 [00:01<00:01,  2.13it/s]Capturing CUDA graphs (PIECEWISE):  57%|█████▋    | 4/7 [00:01<00:01,  2.34it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████▏  | 5/7 [00:02<00:00,  2.52it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▌ | 6/7 [00:02<00:00,  2.63it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 7/7 [00:02<00:00,  2.60it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 7/7 [00:02<00:00,  2.40it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/2 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):  50%|█████     | 1/2 [00:00<00:00,  3.15it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00,  3.39it/s]Capturing CUDA graphs (FULL): 100%|██████████| 2/2 [00:00<00:00,  3.35it/s]
+(EngineCore pid=20256) INFO 11-19 05:47:49 [model_runner.py:1163] Graph capturing finished in 5 secs, took 0.04 GiB
+(EngineCore pid=20256) INFO 11-19 05:47:49 [gpu_worker.py:772] Available KV cache memory: 23.68 GiB
+(EngineCore pid=20256) INFO 11-19 05:47:49 [gpu_worker.py:787] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8990 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9010. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=20256) INFO 11-19 05:47:49 [kv_cache_utils.py:1147] GPU KV cache size: 172,416 tokens, Maximum concurrency for 32,768 tokens per request: 5.26x
+(EngineCore pid=20256) INFO 11-19 05:47:50 [kernel_warmup.py:179] JIT kernel warmup starting.
+(EngineCore pid=20256) INFO 11-19 05:47:50 [kernel_warmup.py:192] JIT kernel warmup finished in 0.00s.
+(EngineCore pid=20256) INFO 11-19 05:47:51 [qwen_vl_triton_warmup.py:57] Warmed position embedding and vision rotary kernels on grids=[(1, 16, 16), (1, 16, 2), (1, 2, 16), (1, 2, 2)].
+(EngineCore pid=20256) INFO 11-19 05:47:51 [qwen_vl_triton_warmup.py:102] Warmed M-RoPE Triton kernels.
+Capturing CUDA graphs (PIECEWISE):   0%|          | 0/7 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):  14%|█▍        | 1/7 [00:00<00:02,  2.82it/s]Capturing CUDA graphs (PIECEWISE):  29%|██▊       | 2/7 [00:00<00:01,  3.10it/s]Capturing CUDA graphs (PIECEWISE):  43%|████▎     | 3/7 [00:00<00:01,  3.15it/s]Capturing CUDA graphs (PIECEWISE):  57%|█████▋    | 4/7 [00:01<00:00,  3.19it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████▏  | 5/7 [00:01<00:00,  3.16it/s]Capturing CUDA graphs (PIECEWISE):  86%|████████▌ | 6/7 [00:01<00:00,  3.19it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 7/7 [00:02<00:00,  3.24it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 7/7 [00:02<00:00,  3.18it/s]
+Capturing CUDA graphs (FULL):   0%|          | 0/5 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):  20%|██        | 1/5 [00:00<00:00,  4.12it/s]Capturing CUDA graphs (FULL):  40%|████      | 2/5 [00:00<00:00,  4.07it/s]Capturing CUDA graphs (FULL):  60%|██████    | 3/5 [00:00<00:00,  3.89it/s]Capturing CUDA graphs (FULL):  80%|████████  | 4/5 [00:01<00:00,  3.89it/s]Capturing CUDA graphs (FULL): 100%|██████████| 5/5 [00:01<00:00,  3.93it/s]Capturing CUDA graphs (FULL): 100%|██████████| 5/5 [00:01<00:00,  3.94it/s]
+(EngineCore pid=20256) INFO 11-19 05:47:57 [model_runner.py:1163] Graph capturing finished in 5 secs, took 0.04 GiB
+(EngineCore pid=20256) INFO 11-19 05:47:57 [gpu_worker.py:1003] CUDA graph pool memory: 0.04 GiB (actual), 0.05 GiB (estimated), difference: 0.0 GiB (8.7%).
+(EngineCore pid=20256) INFO 11-19 05:47:57 [gpu_worker.py:1066] Free memory on device (47.37/47.4 GiB) on startup. Desired GPU memory utilization is (0.9, 42.66 GiB). Actual usage is 16.73 GiB for consumed memory (weights + non-torch), 2.25 GiB for peak activation, and 0.04 GiB for CUDAGraph memory. Replace gpu_memory_utilization config with `--kv-cache-memory=25219458560` (23.49 GiB) to fit into requested memory, or `--kv-cache-memory=30275560960` (28.2 GiB) to fully utilize gpu memory. Current kv cache memory in use is 23.68 GiB.
+(EngineCore pid=20256) INFO 11-19 05:47:59 [jit_monitor.py:84] Kernel JIT monitor activated; monitored JIT compilations during inference will use mode=warn.
+(EngineCore pid=20256) INFO 11-19 05:47:59 [core.py:405] init engine (profile, create kv cache, warmup model) took 32.14 s (compilation: 0.92 s)
+(EngineCore pid=20256) INFO 11-19 05:48:00 [kernel.py:480] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'], gelu_and_mul_sparse=['triton', 'native'])
+(MainProcess pid=19725) INFO 11-19 05:48:00 [hf.py:736] Detected the chat template content format to be 'openai'. You can set `--chat-template-content-format` to override this.
+[qwen3vl-8b symbolic:none:ood_count_control] 1300 selected, 810 done, 490 to run
+[qwen3vl-8b symbolic:none:ood_count_control] 16/490  1.05 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 32/490  1.01 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 48/490  1.01 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 64/490  1.01 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 80/490  1.04 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 96/490  1.03 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 112/490  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 128/490  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 144/490  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 160/490  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 176/490  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 192/490  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 208/490  1.34 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 224/490  1.49 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 240/490  1.46 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 256/490  1.47 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 272/490  1.48 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 288/490  1.50 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 304/490  1.67 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 320/490  2.11 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 336/490  1.77 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 352/490  1.84 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 368/490  1.77 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 384/490  2.10 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 400/490  1.54 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 416/490  1.30 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 432/490  1.27 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 448/490  1.29 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 464/490  1.29 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 480/490  1.26 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] 490/490  1.41 s/problem  errors=0
+[qwen3vl-8b symbolic:none:ood_count_control] finished in 649 s
+[qwen3vl-8b symbolic_complete:none:ood_count] 1300 selected, 0 done, 1300 to run
+[qwen3vl-8b symbolic_complete:none:ood_count] 16/1300  1.74 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 32/1300  1.77 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 48/1300  1.75 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 64/1300  1.68 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 80/1300  1.78 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 96/1300  1.78 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 112/1300  1.74 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 128/1300  1.74 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 144/1300  1.67 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 160/1300  1.68 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 176/1300  1.75 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 192/1300  1.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 208/1300  1.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 224/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 240/1300  1.79 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 256/1300  1.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 272/1300  1.68 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 288/1300  1.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 304/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 320/1300  1.37 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 336/1300  1.41 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 352/1300  1.44 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 368/1300  1.40 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 384/1300  1.44 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 400/1300  1.42 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 416/1300  1.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 432/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 448/1300  1.68 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 464/1300  1.67 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 480/1300  1.77 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 496/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 512/1300  1.66 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 528/1300  1.69 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 544/1300  1.69 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 560/1300  1.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 576/1300  1.75 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 592/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 608/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 624/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 640/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 656/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 672/1300  1.73 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 688/1300  1.73 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 704/1300  1.69 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 720/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 736/1300  1.68 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 752/1300  1.65 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 768/1300  1.68 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 784/1300  1.69 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 800/1300  1.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 816/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 832/1300  1.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 848/1300  1.67 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 864/1300  1.69 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 880/1300  1.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 896/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 912/1300  1.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 928/1300  1.77 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 944/1300  1.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 960/1300  1.73 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 976/1300  1.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 992/1300  1.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1008/1300  1.56 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1024/1300  1.31 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1040/1300  1.52 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1056/1300  1.28 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1072/1300  1.32 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1088/1300  1.46 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1104/1300  1.61 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1120/1300  1.59 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1136/1300  1.59 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1152/1300  1.59 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1168/1300  1.62 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1184/1300  1.63 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1200/1300  1.59 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1216/1300  1.55 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1232/1300  1.49 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1248/1300  1.54 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1264/1300  1.57 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1280/1300  1.51 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1296/1300  1.56 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] 1300/1300  1.63 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count] finished in 2186 s
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1300 selected, 0 done, 1300 to run
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 16/1300  0.67 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 32/1300  0.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 48/1300  0.67 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 64/1300  0.67 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 80/1300  0.69 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 96/1300  0.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 112/1300  0.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 128/1300  0.77 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 144/1300  0.83 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 160/1300  0.81 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 176/1300  0.81 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 192/1300  0.81 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 208/1300  0.80 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 224/1300  0.82 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 240/1300  0.79 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 256/1300  0.80 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 272/1300  0.80 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 288/1300  0.82 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 304/1300  0.85 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 320/1300  0.72 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 336/1300  0.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 352/1300  0.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 368/1300  0.70 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 384/1300  0.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 400/1300  0.71 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 416/1300  0.77 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 432/1300  0.79 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 448/1300  0.76 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 464/1300  0.79 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 480/1300  0.75 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 496/1300  0.78 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 512/1300  0.86 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 528/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 544/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 560/1300  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 576/1300  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 592/1300  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 608/1300  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 624/1300  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 640/1300  0.94 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 656/1300  0.93 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 672/1300  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 688/1300  0.91 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 704/1300  0.93 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 720/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 736/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 752/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 768/1300  0.88 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 784/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 800/1300  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 816/1300  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 832/1300  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 848/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 864/1300  0.88 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 880/1300  0.93 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 896/1300  0.89 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 912/1300  0.95 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 928/1300  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 944/1300  0.90 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 960/1300  0.94 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 976/1300  0.94 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 992/1300  0.94 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1008/1300  0.87 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1024/1300  0.83 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1040/1300  0.82 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1056/1300  0.79 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1072/1300  0.83 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1088/1300  0.81 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1104/1300  0.97 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1120/1300  1.23 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1136/1300  1.24 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1152/1300  1.25 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1168/1300  1.24 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1184/1300  1.24 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1200/1300  1.22 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1216/1300  0.93 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1232/1300  1.31 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1248/1300  0.93 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1264/1300  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1280/1300  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1296/1300  0.92 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] 1300/1300  1.21 s/problem  errors=0
+[qwen3vl-8b symbolic_complete:none:ood_count_control] finished in 1164 s
+[qwen3vl-8b visual:composite:ood_count] 1300 selected, 0 done, 1300 to run
+[qwen3vl-8b visual:composite:ood_count] 16/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 32/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 48/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 64/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 80/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 96/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 112/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 128/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 144/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 160/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 176/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 192/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 208/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 224/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 240/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 256/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 272/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 288/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 304/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 320/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 336/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 352/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 368/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 384/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 400/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 416/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 432/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 448/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 464/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 480/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 496/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 512/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 528/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 544/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 560/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 576/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 592/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 608/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 624/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 640/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 656/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 672/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 688/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 704/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 720/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 736/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 752/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 768/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 784/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 800/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 816/1300  1.74 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 832/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 848/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 864/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 880/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 896/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 912/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 928/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 944/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 960/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 976/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 992/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1008/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1024/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1040/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1056/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1072/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1088/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1104/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1120/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1136/1300  1.45 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1152/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1168/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1184/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1200/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1216/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1232/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1248/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1264/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1280/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1296/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] 1300/1300  1.66 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count] finished in 1882 s
+[qwen3vl-8b visual:composite:ood_count_control] 1300 selected, 0 done, 1300 to run
+[qwen3vl-8b visual:composite:ood_count_control] 16/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 32/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 48/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 64/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 80/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 96/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 112/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 128/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 144/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 160/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 176/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 192/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 208/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 224/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 240/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 256/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 272/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 288/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 304/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 320/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 336/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 352/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 368/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 384/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 400/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 416/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 432/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 448/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 464/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 480/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 496/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 512/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 528/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 544/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 560/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 576/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 592/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 608/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 624/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 640/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 656/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 672/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 688/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 704/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 720/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 736/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 752/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 768/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 784/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 800/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 816/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 832/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 848/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 864/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 880/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 896/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 912/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 928/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 944/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 960/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 976/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 992/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1008/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1024/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1040/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1056/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1072/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1088/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1104/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1120/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1136/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1152/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1168/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1184/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1200/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1216/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1232/1300  1.35 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1248/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1264/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1280/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1296/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] 1300/1300  1.63 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_count_control] finished in 1864 s
+[qwen3vl-8b visual:composite:ood_render] 1300 selected, 0 done, 1300 to run
+[qwen3vl-8b visual:composite:ood_render] 16/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 32/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 48/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 64/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 80/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 96/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 112/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 128/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 144/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 160/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 176/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 192/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 208/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 224/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 240/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 256/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 272/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 288/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 304/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 320/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 336/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 352/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 368/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 384/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 400/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 416/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 432/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 448/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 464/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 480/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 496/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 512/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 528/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 544/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 560/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 576/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 592/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 608/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 624/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 640/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 656/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 672/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 688/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 704/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 720/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 736/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 752/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 768/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 784/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 800/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 816/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 832/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 848/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 864/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 880/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 896/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 912/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 928/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 944/1300  1.36 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 960/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 976/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 992/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1008/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1024/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1040/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1056/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1072/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1088/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1104/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1120/1300  1.40 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1136/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1152/1300  1.42 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1168/1300  1.39 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1184/1300  1.41 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1200/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1216/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1232/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1248/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1264/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1280/1300  1.38 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1296/1300  1.37 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] 1300/1300  1.60 s/problem  errors=0
+[qwen3vl-8b visual:composite:ood_render] finished in 1876 s
+[
+ {
+  "stage": "symbolic:none:ood_count_control",
+  "run": 490,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "symbolic_complete:none:ood_count_control",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_count_control",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ },
+ {
+  "stage": "visual:composite:ood_render",
+  "run": 1300,
+  "errors": 0,
+  "left": 0,
+  "stopped": null
+ }
+]
+(MainProcess pid=19725) INFO 11-19 08:28:22 [utils.py:628] [shutdown] Process manager: send sigterm to process EngineCore
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1525] [shutdown] EngineCore: trigger received signal=SIGTERM
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1712] [shutdown] EngineCore: start mode=abort timeout=0s
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1743] [shutdown] EngineCore: request processing complete; starting resource teardown
+(EngineCore pid=20256) INFO 11-19 08:28:22 [core.py:1573] [shutdown] EngineCore: exiting busy loop
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [utils.py:648] [shutdown] Process manager: force killing remaining processes count=1
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [utils.py:653] [shutdown] Process manager: force killing remaining process EngineCore pid 20256
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [system_utils.py:248] [shutdown] force killing sub process python pid 20977
+(MainProcess pid=19725) WARNING 11-19 08:28:27 [system_utils.py:248] [shutdown] force killing sub process python pid 20981

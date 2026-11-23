@@ -13,3 +13,6 @@ Controlled Bongard-style stimuli and VLM evaluation for the EEGAVR project
 
 The design follows the "Controlled stimulus curation protocol" (EEGAVR wiki).
 The stimuli are controlled Methods stimuli, not a dataset contribution.
+
+## Results
+Results reports (PDF, figures, tables) and raw model answers: see [reports/README.md](reports/README.md).
